@@ -1,0 +1,9 @@
+tags
+TAGS
+tags*
+*tags
+\.ccls-cache
+\.clangd
+*.o
+*.out
+*.spv

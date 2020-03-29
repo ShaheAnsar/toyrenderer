@@ -1,0 +1,40 @@
+[
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++2a",
+            "-Wall",
+            "-Wextra",
+            "-O3",
+            "-pipe",
+            "-pedantic",
+            "-ggdb",
+            "-I./include",
+            "-o",
+            "obj/main.o",
+            "src/main.cpp"
+        ],
+        "directory": "/home/shahe/linux-hdd/development/C++/OGL",
+        "file": "src/main.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++2a",
+            "-Wall",
+            "-Wextra",
+            "-O3",
+            "-pipe",
+            "-pedantic",
+            "-ggdb",
+            "-I./include",
+            "-o",
+            "obj/shader.o",
+            "src/shader.cpp"
+        ],
+        "directory": "/home/shahe/linux-hdd/development/C++/OGL",
+        "file": "src/shader.cpp"
+    }
+]

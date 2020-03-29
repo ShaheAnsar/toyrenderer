@@ -1,0 +1,30 @@
+#
+# Gauss.mtl
+#
+
+newmtl Gauss1
+illum 2
+Kd 0.800000 0.800000 0.800000
+Ka 0.000000 0.000000 0.000000
+Ks 0.200000 0.200000 0.200000
+Ke 0.000000 0.000000 0.000000
+Ns 432.193011
+map_Kd materials\gauss_inf_a.bmp
+
+newmtl Gauss2
+illum 2
+Kd 0.800000 0.800000 0.800000
+Ka 0.000000 0.000000 0.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ns 0.000000
+map_Kd materials\gauss_inf_b.bmp
+
+newmtl Gauss Decals
+illum 2
+Kd 0.800000 0.800000 0.800000
+Ka 0.200000 0.200000 0.200000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ns 0.000000
+map_Kd materials\text_cell.bmp
