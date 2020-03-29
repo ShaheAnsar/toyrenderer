@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 
 
 #include <engine2D.hpp>
@@ -36,18 +37,21 @@ void Quad::calculate() {
 }
 
 
-Quad::Quad(glm::vec2 ll, glm::vec2 dim) {
+Quad::Quad(glm::vec2 ll, glm::vec2 dim) : scale(1.0f) {
   vertices[0] = ll;
   vertices[1] = vertices[0] + glm::vec2{0, dim.x};
   vertices[2] = vertices[1] + glm::vec2{dim.y, 0};
   vertices[3] = vertices[0] + glm::vec2{dim.y, 0};
   position = glm::vec2(0.0f);
-  for(const auto& i: vertices) {
-    position += i;
+  for(int i = 0; i < 4; i++) {
+    position += vertices[i];
   }
   position /= 4;
   for(int i = 0; i < 4; i++) {
     vertices_c[i] = vertices[i] - position;
+  }
+  for(int i = 0; i < 4; i++) {
+    std::cerr << "[DEBUG] - FROM QUAD" << vertices_c[i].x << ", " <<  vertices_c[i].y << std::endl;
   }
 }
 
@@ -95,13 +99,13 @@ void Renderable::submit_data() {
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glBindBufferBase(GL_UNIFORM_BUFFER, UNIFORM_BUFFER_RENDERABLE, ubo);
-  std::vector<float> array_buffer_data(4*(2/*positon*/ + 2/*uv*/ + 4/*color*/));
+  std::vector<float> array_buffer_data;
   for(int i = 0; i < 4; i++) {
     array_buffer_data.push_back(quad.vertices_c[i].x);
     array_buffer_data.push_back(quad.vertices_c[i].y);
-    switch(i) {
+    switch(i % 4) {
     case 0:
-      array_buffer_data.push_back(0);
+      array_buffer_data.push_back(0.0f);
       array_buffer_data.push_back(0.0f);
       break;
       
@@ -125,7 +129,7 @@ void Renderable::submit_data() {
     array_buffer_data.push_back(color.b);
     array_buffer_data.push_back(color.a);
   }
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float)*array_buffer_data.size(), array_buffer_data.data(), GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*array_buffer_data.size(), array_buffer_data.data(), GL_STREAM_DRAW);
   uint8_t element_indices[] = {
 			     0, 1, 2,
 			     0, 2, 3
@@ -138,7 +142,7 @@ void Renderable::submit_data() {
   glBufferData(GL_UNIFORM_BUFFER, sizeof(data), &data, GL_STREAM_DRAW);
   glVertexAttribPointer(POSITION, 2, GL_FLOAT, GL_FALSE, sizeof(float)*((2 + 2 + 4)), (void*)0);
   glVertexAttribPointer(UV, 2, GL_FLOAT, GL_FALSE, sizeof(float)*((2 + 2 + 4)), (void*)(sizeof(float)*2));
-  glVertexAttribPointer(POSITION, 4, GL_FLOAT, GL_FALSE, sizeof(float)*((2 + 2 + 4)), (void*)(sizeof(float)*4));
+  glVertexAttribPointer(COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(float)*((2 + 2 + 4)), (void*)(sizeof(float)*4));
   glEnableVertexAttribArray(POSITION);
   glEnableVertexAttribArray(UV);
   glEnableVertexAttribArray(COLOR);
@@ -149,6 +153,7 @@ void Renderable::tick() {
   shader_prog.use_program();
   glBindVertexArray(vao);
   glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0);
 }
 

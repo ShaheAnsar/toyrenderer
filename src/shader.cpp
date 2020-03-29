@@ -43,7 +43,7 @@ void ShaderProgram::create_program(std::vector<Shader> shaders) {
   glGetProgramiv(program_id, GL_LINK_STATUS, &success);
   if (!success) {
     mlog << std::make_pair(logger::pri::ERR,
-			   "Unable to link program " + program_id);
+			   "Unable to link program " + std::to_string(program_id));
   } else {
     mlog << "Successfully linked program " + std::to_string(program_id);
     shader_created = true;

@@ -3,6 +3,7 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <memory>
 
 #define TINY_OBJ_IMPLEMENTATION
 #include <../include/tiny_obj_loader.h>
@@ -18,6 +19,7 @@
 
 #include <logger.hpp>
 #include <shader.hpp>
+#include <engine2D.hpp>
 
 #define HEIGHT 600
 #define WIDTH 800
@@ -125,8 +127,7 @@ typedef void  (APIENTRY *DEBUGCALLBACK)(GLenum source, GLenum type, GLuint id, G
 void  APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 			     GLsizei length, const GLchar* message, const void* userParam)
 {
-  //mlog << message;
-  std::cerr << message;
+  mlog << std::make_pair<logger::pri, std::string>( logger::pri::DEB, std::string("<From OpenGL> ") + message );
 }
 
 int main(void) {
@@ -135,6 +136,7 @@ int main(void) {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
   win = glfwCreateWindow(WIDTH, HEIGHT, "OGL", nullptr, nullptr);
   if (!win) {
     std::cerr << "Unable to initialize window";
@@ -149,6 +151,7 @@ int main(void) {
   mlog << "Initialized GLAD";
   glDebugMessageCallback(debugCallback, nullptr);
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_DEBUG_OUTPUT);
   glViewport(0, 0, WIDTH, HEIGHT);
   GLuint vao;
   GLuint vbo;
@@ -233,22 +236,34 @@ int main(void) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tw, th, 0, image_format, GL_UNSIGNED_BYTE, td);
   glGenerateMipmap(GL_TEXTURE_2D);
-  glUniform1i(0, 0);
   stbi_image_free(td);
 
   Rend::Shader shader3dv("shaders/3d_basic_v.spv", GL_VERTEX_SHADER);
   Rend::Shader shader3df("shaders/3d_basic_f.spv", GL_FRAGMENT_SHADER);
   Rend::ShaderProgram program3d({shader3dv, shader3df});
   program3d.use_program();
+  glUniform1i(1, 0);
+  // Engine2D Test
+  engine2D::GameObject go(glm::vec2(0.0f));
+  auto r_attr = std::make_shared<engine2D::Renderable>( glm::vec2(0.5f, 0.5f), glm::vec2(0.4f, 0.4f));
+  Rend::Shader e2d_v("shaders/engine2d_basic_v.spv", GL_VERTEX_SHADER);
+  Rend::Shader e2d_f("shaders/engine2d_basic_f.spv", GL_FRAGMENT_SHADER);
+  Rend::ShaderProgram program2d({e2d_v, e2d_f});
+  program2d.use_program();
+  r_attr->set_shaderprog(program2d);
+  r_attr->add_color(glm::vec4{1.0f, 1.0f, 0.0f, 1.0f});
+  r_attr->submit_data();
+  go.add_attribute(r_attr);
 
   float time = glfwGetTime();
   float dt = 0;
   while (!glfwWindowShouldClose(win)) {
     glClear(GL_COLOR_BUFFER_BIT);
     glClear(GL_DEPTH_BUFFER_BIT);
-    //glDrawArrays(GL_TRIANGLES, 0, 3);
-    //glDrawElements(GL_TRIANGLES, trie1.size(), GL_UNSIGNED_BYTE, (void*)0);
-    glDrawArrays(GL_TRIANGLES, 0, cube.size()/5);
+    go.tick();
+    ////glDrawArrays(GL_TRIANGLES, 0, 3);
+    ////glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0);
+    //glDrawArrays(GL_TRIANGLES, 0, cube.size()/5);
     glfwPollEvents();
     glfwSwapBuffers(win);
 

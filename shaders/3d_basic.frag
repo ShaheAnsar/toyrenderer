@@ -7,7 +7,7 @@ layout(location = 2) in vec2 uv;
 
 layout(location = 0) out vec4 ocol;
 
-layout(binding = 0) uniform sampler2D _tex;
+layout(binding = 1) uniform sampler2D _tex;
 
 layout(std140, binding = 0) uniform uniform_buffer {
   mat4 mvp;
