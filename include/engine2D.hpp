@@ -30,6 +30,7 @@ namespace engine2D{
     friend class CompareAttributePriority;
     AttrPri pri;
     virtual void tick() = 0;
+  public:
   };
 
   class Texture{

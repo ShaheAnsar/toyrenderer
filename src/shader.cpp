@@ -42,8 +42,13 @@ void ShaderProgram::create_program(std::vector<Shader> shaders) {
   int success = 0;
   glGetProgramiv(program_id, GL_LINK_STATUS, &success);
   if (!success) {
+    GLint buflen = 0;
+    glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &buflen);
+    char* buf = new char[buflen];
+    glGetProgramInfoLog(program_id, buflen, &buflen, buf);
     mlog << std::make_pair(logger::pri::ERR,
-			   "Unable to link program " + std::to_string(program_id));
+			   "Unable to link program " + std::to_string(program_id)
+			   + "\n[OPENGL LOG]\n" + buf);
   } else {
     mlog << "Successfully linked program " + std::to_string(program_id);
     shader_created = true;

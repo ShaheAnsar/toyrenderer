@@ -11,7 +11,7 @@ layout(location = 1) out vec4 ocol;
 layout(location = 2) out vec2 ouv;
 
 
-layout(std140, binding = 0) uniform uniform_buffer {
+layout(std140, binding = 5) uniform uniform_buffer {
   mat4 mvp;
   mat4 model;
   vec4 texcoord_offset;

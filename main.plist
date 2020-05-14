@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+ <key>clang_version</key>
+<string>clang version 10.0.0 </string>
+ <key>diagnostics</key>
+ <array>
+  <dict>
+   <key>path</key>
+   <array>
+    <dict>
+     <key>kind</key><string>event</string>
+     <key>location</key>
+     <dict>
+      <key>line</key><integer>4100</integer>
+      <key>col</key><integer>12</integer>
+      <key>file</key><integer>0</integer>
+     </dict>
+     <key>ranges</key>
+     <array>
+       <array>
+        <dict>
+         <key>line</key><integer>4100</integer>
+         <key>col</key><integer>24</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+        <dict>
+         <key>line</key><integer>4100</integer>
+         <key>col</key><integer>58</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+       </array>
+     </array>
+     <key>depth</key><integer>0</integer>
+     <key>extended_message</key>
+     <string>Although the value stored to &apos;old_limit&apos; is used in the enclosing expression, the value is never actually read from &apos;old_limit&apos;</string>
+     <key>message</key>
+     <string>Although the value stored to &apos;old_limit&apos; is used in the enclosing expression, the value is never actually read from &apos;old_limit&apos;</string>
+    </dict>
+   </array>
+   <key>description</key><string>Although the value stored to &apos;old_limit&apos; is used in the enclosing expression, the value is never actually read from &apos;old_limit&apos;</string>
+   <key>category</key><string>Dead store</string>
+   <key>type</key><string>Dead nested assignment</string>
+   <key>check_name</key><string>deadcode.DeadStores</string>
+   <!-- This hash is experimental and going to change! -->
+   <key>issue_hash_content_of_line_in_context</key><string>638e5092f34ae598e1c2d0915adfd265</string>
+  <key>issue_context_kind</key><string>function</string>
+  <key>issue_context</key><string>stbi__zexpand</string>
+  <key>issue_hash_function_offset</key><string>6</string>
+  <key>location</key>
+  <dict>
+   <key>line</key><integer>4100</integer>
+   <key>col</key><integer>12</integer>
+   <key>file</key><integer>0</integer>
+  </dict>
+  <key>ExecutedLines</key>
+  <dict>
+   <key>0</key>
+   <array>
+    <integer>4100</integer>
+   </array>
+  </dict>
+  </dict>
+  <dict>
+   <key>path</key>
+   <array>
+    <dict>
+     <key>kind</key><string>event</string>
+     <key>location</key>
+     <dict>
+      <key>line</key><integer>4975</integer>
+      <key>col</key><integer>29</integer>
+      <key>file</key><integer>0</integer>
+     </dict>
+     <key>ranges</key>
+     <array>
+       <array>
+        <dict>
+         <key>line</key><integer>4975</integer>
+         <key>col</key><integer>29</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+        <dict>
+         <key>line</key><integer>4975</integer>
+         <key>col</key><integer>43</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+       </array>
+       <array>
+        <dict>
+         <key>line</key><integer>4975</integer>
+         <key>col</key><integer>47</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+        <dict>
+         <key>line</key><integer>4975</integer>
+         <key>col</key><integer>57</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+       </array>
+     </array>
+     <key>depth</key><integer>0</integer>
+     <key>extended_message</key>
+     <string>Value stored to &apos;idata_limit_old&apos; during its initialization is never read</string>
+     <key>message</key>
+     <string>Value stored to &apos;idata_limit_old&apos; during its initialization is never read</string>
+    </dict>
+   </array>
+   <key>description</key><string>Value stored to &apos;idata_limit_old&apos; during its initialization is never read</string>
+   <key>category</key><string>Dead store</string>
+   <key>type</key><string>Dead initialization</string>
+   <key>check_name</key><string>deadcode.DeadStores</string>
+   <!-- This hash is experimental and going to change! -->
+   <key>issue_hash_content_of_line_in_context</key><string>1d1cd0930d59b737010349e27bc79e9a</string>
+  <key>issue_context_kind</key><string>function</string>
+  <key>issue_context</key><string>stbi__parse_png_file</string>
+  <key>issue_hash_function_offset</key><string>95</string>
+  <key>location</key>
+  <dict>
+   <key>line</key><integer>4975</integer>
+   <key>col</key><integer>29</integer>
+   <key>file</key><integer>0</integer>
+  </dict>
+  <key>ExecutedLines</key>
+  <dict>
+   <key>0</key>
+   <array>
+    <integer>4975</integer>
+   </array>
+  </dict>
+  </dict>
+  <dict>
+   <key>path</key>
+   <array>
+    <dict>
+     <key>kind</key><string>event</string>
+     <key>location</key>
+     <dict>
+      <key>line</key><integer>5626</integer>
+      <key>col</key><integer>8</integer>
+      <key>file</key><integer>0</integer>
+     </dict>
+     <key>ranges</key>
+     <array>
+       <array>
+        <dict>
+         <key>line</key><integer>5626</integer>
+         <key>col</key><integer>8</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+        <dict>
+         <key>line</key><integer>5626</integer>
+         <key>col</key><integer>19</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+       </array>
+       <array>
+        <dict>
+         <key>line</key><integer>5626</integer>
+         <key>col</key><integer>23</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+        <dict>
+         <key>line</key><integer>5626</integer>
+         <key>col</key><integer>38</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+       </array>
+     </array>
+     <key>depth</key><integer>0</integer>
+     <key>extended_message</key>
+     <string>Value stored to &apos;tga_x_origin&apos; during its initialization is never read</string>
+     <key>message</key>
+     <string>Value stored to &apos;tga_x_origin&apos; during its initialization is never read</string>
+    </dict>
+   </array>
+   <key>description</key><string>Value stored to &apos;tga_x_origin&apos; during its initialization is never read</string>
+   <key>category</key><string>Dead store</string>
+   <key>type</key><string>Dead initialization</string>
+   <key>check_name</key><string>deadcode.DeadStores</string>
+   <!-- This hash is experimental and going to change! -->
+   <key>issue_hash_content_of_line_in_context</key><string>39abd6c7af8c7f07ad545ab5904456d0</string>
+  <key>issue_context_kind</key><string>function</string>
+  <key>issue_context</key><string>stbi__tga_load</string>
+  <key>issue_hash_function_offset</key><string>9</string>
+  <key>location</key>
+  <dict>
+   <key>line</key><integer>5626</integer>
+   <key>col</key><integer>8</integer>
+   <key>file</key><integer>0</integer>
+  </dict>
+  <key>ExecutedLines</key>
+  <dict>
+   <key>0</key>
+   <array>
+    <integer>5626</integer>
+   </array>
+  </dict>
+  </dict>
+  <dict>
+   <key>path</key>
+   <array>
+    <dict>
+     <key>kind</key><string>event</string>
+     <key>location</key>
+     <dict>
+      <key>line</key><integer>5627</integer>
+      <key>col</key><integer>8</integer>
+      <key>file</key><integer>0</integer>
+     </dict>
+     <key>ranges</key>
+     <array>
+       <array>
+        <dict>
+         <key>line</key><integer>5627</integer>
+         <key>col</key><integer>8</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+        <dict>
+         <key>line</key><integer>5627</integer>
+         <key>col</key><integer>19</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+       </array>
+       <array>
+        <dict>
+         <key>line</key><integer>5627</integer>
+         <key>col</key><integer>23</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+        <dict>
+         <key>line</key><integer>5627</integer>
+         <key>col</key><integer>38</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+       </array>
+     </array>
+     <key>depth</key><integer>0</integer>
+     <key>extended_message</key>
+     <string>Value stored to &apos;tga_y_origin&apos; during its initialization is never read</string>
+     <key>message</key>
+     <string>Value stored to &apos;tga_y_origin&apos; during its initialization is never read</string>
+    </dict>
+   </array>
+   <key>description</key><string>Value stored to &apos;tga_y_origin&apos; during its initialization is never read</string>
+   <key>category</key><string>Dead store</string>
+   <key>type</key><string>Dead initialization</string>
+   <key>check_name</key><string>deadcode.DeadStores</string>
+   <!-- This hash is experimental and going to change! -->
+   <key>issue_hash_content_of_line_in_context</key><string>35fd36112f933bc25ac11f57c093b72d</string>
+  <key>issue_context_kind</key><string>function</string>
+  <key>issue_context</key><string>stbi__tga_load</string>
+  <key>issue_hash_function_offset</key><string>10</string>
+  <key>location</key>
+  <dict>
+   <key>line</key><integer>5627</integer>
+   <key>col</key><integer>8</integer>
+   <key>file</key><integer>0</integer>
+  </dict>
+  <key>ExecutedLines</key>
+  <dict>
+   <key>0</key>
+   <array>
+    <integer>5627</integer>
+   </array>
+  </dict>
+  </dict>
+  <dict>
+   <key>path</key>
+   <array>
+    <dict>
+     <key>kind</key><string>event</string>
+     <key>location</key>
+     <dict>
+      <key>line</key><integer>5806</integer>
+      <key>col</key><integer>4</integer>
+      <key>file</key><integer>0</integer>
+     </dict>
+     <key>ranges</key>
+     <array>
+       <array>
+        <dict>
+         <key>line</key><integer>5806</integer>
+         <key>col</key><integer>24</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+        <dict>
+         <key>line</key><integer>5807</integer>
+         <key>col</key><integer>40</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+       </array>
+     </array>
+     <key>depth</key><integer>0</integer>
+     <key>extended_message</key>
+     <string>Value stored to &apos;tga_palette_start&apos; is never read</string>
+     <key>message</key>
+     <string>Value stored to &apos;tga_palette_start&apos; is never read</string>
+    </dict>
+   </array>
+   <key>description</key><string>Value stored to &apos;tga_palette_start&apos; is never read</string>
+   <key>category</key><string>Dead store</string>
+   <key>type</key><string>Dead assignment</string>
+   <key>check_name</key><string>deadcode.DeadStores</string>
+   <!-- This hash is experimental and going to change! -->
+   <key>issue_hash_content_of_line_in_context</key><string>26aaf74ddf5b4dda21d6699c32c6390c</string>
+  <key>issue_context_kind</key><string>function</string>
+  <key>issue_context</key><string>stbi__tga_load</string>
+  <key>issue_hash_function_offset</key><string>189</string>
+  <key>location</key>
+  <dict>
+   <key>line</key><integer>5806</integer>
+   <key>col</key><integer>4</integer>
+   <key>file</key><integer>0</integer>
+  </dict>
+  <key>ExecutedLines</key>
+  <dict>
+   <key>0</key>
+   <array>
+    <integer>5806</integer>
+   </array>
+  </dict>
+  </dict>
+  <dict>
+   <key>path</key>
+   <array>
+    <dict>
+     <key>kind</key><string>event</string>
+     <key>location</key>
+     <dict>
+      <key>line</key><integer>5806</integer>
+      <key>col</key><integer>24</integer>
+      <key>file</key><integer>0</integer>
+     </dict>
+     <key>ranges</key>
+     <array>
+       <array>
+        <dict>
+         <key>line</key><integer>5806</integer>
+         <key>col</key><integer>42</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+        <dict>
+         <key>line</key><integer>5807</integer>
+         <key>col</key><integer>40</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+       </array>
+     </array>
+     <key>depth</key><integer>0</integer>
+     <key>extended_message</key>
+     <string>Although the value stored to &apos;tga_palette_len&apos; is used in the enclosing expression, the value is never actually read from &apos;tga_palette_len&apos;</string>
+     <key>message</key>
+     <string>Although the value stored to &apos;tga_palette_len&apos; is used in the enclosing expression, the value is never actually read from &apos;tga_palette_len&apos;</string>
+    </dict>
+   </array>
+   <key>description</key><string>Although the value stored to &apos;tga_palette_len&apos; is used in the enclosing expression, the value is never actually read from &apos;tga_palette_len&apos;</string>
+   <key>category</key><string>Dead store</string>
+   <key>type</key><string>Dead nested assignment</string>
+   <key>check_name</key><string>deadcode.DeadStores</string>
+   <!-- This hash is experimental and going to change! -->
+   <key>issue_hash_content_of_line_in_context</key><string>325c629abac4212c80720bd6c64f2345</string>
+  <key>issue_context_kind</key><string>function</string>
+  <key>issue_context</key><string>stbi__tga_load</string>
+  <key>issue_hash_function_offset</key><string>189</string>
+  <key>location</key>
+  <dict>
+   <key>line</key><integer>5806</integer>
+   <key>col</key><integer>24</integer>
+   <key>file</key><integer>0</integer>
+  </dict>
+  <key>ExecutedLines</key>
+  <dict>
+   <key>0</key>
+   <array>
+    <integer>5806</integer>
+   </array>
+  </dict>
+  </dict>
+  <dict>
+   <key>path</key>
+   <array>
+    <dict>
+     <key>kind</key><string>event</string>
+     <key>location</key>
+     <dict>
+      <key>line</key><integer>5806</integer>
+      <key>col</key><integer>42</integer>
+      <key>file</key><integer>0</integer>
+     </dict>
+     <key>ranges</key>
+     <array>
+       <array>
+        <dict>
+         <key>line</key><integer>5807</integer>
+         <key>col</key><integer>10</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+        <dict>
+         <key>line</key><integer>5807</integer>
+         <key>col</key><integer>40</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+       </array>
+     </array>
+     <key>depth</key><integer>0</integer>
+     <key>extended_message</key>
+     <string>Although the value stored to &apos;tga_palette_bits&apos; is used in the enclosing expression, the value is never actually read from &apos;tga_palette_bits&apos;</string>
+     <key>message</key>
+     <string>Although the value stored to &apos;tga_palette_bits&apos; is used in the enclosing expression, the value is never actually read from &apos;tga_palette_bits&apos;</string>
+    </dict>
+   </array>
+   <key>description</key><string>Although the value stored to &apos;tga_palette_bits&apos; is used in the enclosing expression, the value is never actually read from &apos;tga_palette_bits&apos;</string>
+   <key>category</key><string>Dead store</string>
+   <key>type</key><string>Dead nested assignment</string>
+   <key>check_name</key><string>deadcode.DeadStores</string>
+   <!-- This hash is experimental and going to change! -->
+   <key>issue_hash_content_of_line_in_context</key><string>b8da9cc7a1dbe354edf0d0d7964430f9</string>
+  <key>issue_context_kind</key><string>function</string>
+  <key>issue_context</key><string>stbi__tga_load</string>
+  <key>issue_hash_function_offset</key><string>189</string>
+  <key>location</key>
+  <dict>
+   <key>line</key><integer>5806</integer>
+   <key>col</key><integer>42</integer>
+   <key>file</key><integer>0</integer>
+  </dict>
+  <key>ExecutedLines</key>
+  <dict>
+   <key>0</key>
+   <array>
+    <integer>5806</integer>
+   </array>
+  </dict>
+  </dict>
+  <dict>
+   <key>path</key>
+   <array>
+    <dict>
+     <key>kind</key><string>event</string>
+     <key>location</key>
+     <dict>
+      <key>line</key><integer>5807</integer>
+      <key>col</key><integer>10</integer>
+      <key>file</key><integer>0</integer>
+     </dict>
+     <key>ranges</key>
+     <array>
+       <array>
+        <dict>
+         <key>line</key><integer>5807</integer>
+         <key>col</key><integer>25</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+        <dict>
+         <key>line</key><integer>5807</integer>
+         <key>col</key><integer>40</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+       </array>
+     </array>
+     <key>depth</key><integer>0</integer>
+     <key>extended_message</key>
+     <string>Although the value stored to &apos;tga_x_origin&apos; is used in the enclosing expression, the value is never actually read from &apos;tga_x_origin&apos;</string>
+     <key>message</key>
+     <string>Although the value stored to &apos;tga_x_origin&apos; is used in the enclosing expression, the value is never actually read from &apos;tga_x_origin&apos;</string>
+    </dict>
+   </array>
+   <key>description</key><string>Although the value stored to &apos;tga_x_origin&apos; is used in the enclosing expression, the value is never actually read from &apos;tga_x_origin&apos;</string>
+   <key>category</key><string>Dead store</string>
+   <key>type</key><string>Dead nested assignment</string>
+   <key>check_name</key><string>deadcode.DeadStores</string>
+   <!-- This hash is experimental and going to change! -->
+   <key>issue_hash_content_of_line_in_context</key><string>5eac1ed6ae88d5d38f3fe317ee7f6c01</string>
+  <key>issue_context_kind</key><string>function</string>
+  <key>issue_context</key><string>stbi__tga_load</string>
+  <key>issue_hash_function_offset</key><string>190</string>
+  <key>location</key>
+  <dict>
+   <key>line</key><integer>5807</integer>
+   <key>col</key><integer>10</integer>
+   <key>file</key><integer>0</integer>
+  </dict>
+  <key>ExecutedLines</key>
+  <dict>
+   <key>0</key>
+   <array>
+    <integer>5807</integer>
+   </array>
+  </dict>
+  </dict>
+  <dict>
+   <key>path</key>
+   <array>
+    <dict>
+     <key>kind</key><string>event</string>
+     <key>location</key>
+     <dict>
+      <key>line</key><integer>5807</integer>
+      <key>col</key><integer>25</integer>
+      <key>file</key><integer>0</integer>
+     </dict>
+     <key>ranges</key>
+     <array>
+       <array>
+        <dict>
+         <key>line</key><integer>5807</integer>
+         <key>col</key><integer>40</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+        <dict>
+         <key>line</key><integer>5807</integer>
+         <key>col</key><integer>40</integer>
+         <key>file</key><integer>0</integer>
+        </dict>
+       </array>
+     </array>
+     <key>depth</key><integer>0</integer>
+     <key>extended_message</key>
+     <string>Although the value stored to &apos;tga_y_origin&apos; is used in the enclosing expression, the value is never actually read from &apos;tga_y_origin&apos;</string>
+     <key>message</key>
+     <string>Although the value stored to &apos;tga_y_origin&apos; is used in the enclosing expression, the value is never actually read from &apos;tga_y_origin&apos;</string>
+    </dict>
+   </array>
+   <key>description</key><string>Although the value stored to &apos;tga_y_origin&apos; is used in the enclosing expression, the value is never actually read from &apos;tga_y_origin&apos;</string>
+   <key>category</key><string>Dead store</string>
+   <key>type</key><string>Dead nested assignment</string>
+   <key>check_name</key><string>deadcode.DeadStores</string>
+   <!-- This hash is experimental and going to change! -->
+   <key>issue_hash_content_of_line_in_context</key><string>109e37390cce697e3d8c2c20e2be1f1f</string>
+  <key>issue_context_kind</key><string>function</string>
+  <key>issue_context</key><string>stbi__tga_load</string>
+  <key>issue_hash_function_offset</key><string>190</string>
+  <key>location</key>
+  <dict>
+   <key>line</key><integer>5807</integer>
+   <key>col</key><integer>25</integer>
+   <key>file</key><integer>0</integer>
+  </dict>
+  <key>ExecutedLines</key>
+  <dict>
+   <key>0</key>
+   <array>
+    <integer>5807</integer>
+   </array>
+  </dict>
+  </dict>
+ </array>
+ <key>files</key>
+ <array>
+  <string>./include/../include/stb_image.h</string>
+ </array>
+</dict>
+</plist>

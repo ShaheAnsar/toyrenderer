@@ -7,4 +7,5 @@ tags*
 *.o
 *.out
 *.spv
+*.log
 *\~
