@@ -21,19 +21,19 @@
 
 extern std::fstream flog;
 
-struct basic_mat_ubo {
-  glm::vec4 ambient_c;
-  glm::vec4 diffuse_c;
-  glm::vec4 specular_c;
-};
 
-struct basic_mat_rend {
-  GLuint ubo;
-  basic_mat_ubo mat_ubo;
-  std::optional<Rend::Texture> ambient_t;
-  std::optional<std::size_t> diffuse_t;
-  std::optional<std::size_t> specular_t;
-};
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 namespace Rend{
