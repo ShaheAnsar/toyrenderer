@@ -39,15 +39,21 @@ vec4 calc_ambient(){
 }
 
 vec4 calc_diffuse(){
-  float t = clamp(dot(normal, normalize( pos_int.xyz - pos )), 0.0f, 1.0f);
-  t += clamp(dot(normal, normalize( dlight_direction.xyz)), 0.0f, 1.0f);
+  float pfalloff = dot(pos_int.xyz - pos, pos_int.xyz - pos) * fallof_c.x
+    + distance(pos_int.xyz, pos) * fallof_c.y + fallof_c.z;
+
+  float t = min(1.0f, 1.0f/pfalloff) * clamp(dot(normal, normalize( pos_int.xyz - pos )), 0.0f, 1.0f);
+  t += clamp(dot(normal, normalize( -dlight_direction.xyz)), 0.0f, 1.0f);
   //return vec4(vec3(t), 1.0f);
   return vec4( texture(cel_shade, vec2(0.0f, t)).rgb, 1.0f )/1.2f;
 
 }
 
 vec4 calc_specular(){
-  float t = clamp(dot(normalize( reflect(pos - pos_int.xyz, normal) ),
+  float pfalloff = dot(pos_int.xyz - pos, pos_int.xyz - pos) * fallof_c.x
+    + distance(pos_int.xyz, pos) * fallof_c.y + fallof_c.z;
+
+  float t = min(1.0f, 1.0f/pfalloff) * clamp(dot(normalize( reflect(pos - pos_int.xyz, normal) ),
 		      normalize( cam_pos.xyz - pos)), 0.0f, 1.0f);
   t = pow(t, 128);
   //return vec4(vec3(t), 1.0f);

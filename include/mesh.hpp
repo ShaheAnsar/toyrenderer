@@ -23,19 +23,6 @@ extern std::fstream flog;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace Rend{
   // UBO Tuple Switch = {UBO GL_ID, Binding Slot, Offset after which its valid when drawing, No. of triangles for
   //                     which it is valid}
@@ -47,7 +34,7 @@ namespace Rend{
    */
   using ubo_tuple = std::pair<GLuint, int>;
   //using tex_tuple = std::
-  template<typename MaterialType, typename fn_mat, typename fn>
+  template<typename MaterialType, typename fn_mat>
   struct Mesh {
     /*
      * MAT_TUP - {Index to `mats`, Face no from which this material is valid, no. of faces for which
@@ -63,7 +50,7 @@ namespace Rend{
     GLuint vao;
     GLuint vbo;
     bool success;
-    Mesh(std::string path, std::string base_dir, fn func, fn_mat func_mat); // Load in mesh.
+    Mesh(std::string path, std::string base_dir, fn_mat func_mat); // Load in mesh.
     //Mesh(std::vector<float>& vertices, std::size_t pos_off = 0,
     //	 std::size_t norm_off = 0, std::size_t uv_off = 0,
     //	 std::size_t pos_size = 3, std::size_t norm_size = 3, std::size_t uv_size = 2,

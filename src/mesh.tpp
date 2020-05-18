@@ -5,8 +5,8 @@
 //#ifdef MESH_DONE
 
 namespace Rend{
-  template<typename MaterialType, typename fn_mat, typename fn>
-  Mesh<MaterialType, fn_mat, fn>::Mesh(std::string path, std::string base_dir, fn func, fn_mat func_mat) :
+  template<typename MaterialType, typename fn_mat>
+  Mesh<MaterialType, fn_mat>::Mesh(std::string path, std::string base_dir, fn_mat func_mat) :
     vbo(0), vao(0), program_ids({}), texture_ids({}), ubo_tup_switches({}),
     ubo_tuples({}), mat_tuples({}), mats({}), success(false) {
     flog << "From Rend::Mesh" << std::endl;

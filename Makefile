@@ -12,7 +12,7 @@ SPIRV=$(foreach i,$(VSHADERS),$(i:%.vert=%_v.spv)) $(foreach i,$(FSHADERS),$(i:%
 CXX?=g++
 CC?=gcc
 CFLAGS=-Wall -Wextra -O3 -pipe  -pedantic -ggdb -std=c18
-CXXFLAGS=-std=c++2a -Wall -Wextra -O0 -pipe  -pedantic -ggdb
+CXXFLAGS=-std=c++2a -Wall -Wextra -O3 -pipe  -pedantic -ggdb
 LDFLAGS=`pkg-config --libs glfw3 vulkan`  -pthread -ldl
 INCLUDE=-I./include
 

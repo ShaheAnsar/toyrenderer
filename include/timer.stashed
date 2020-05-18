@@ -1,0 +1,12 @@
+#ifndef MY_TIMER_HPP
+#define MY_TIMER_HPP
+
+namespace TEng{ // TEnd -> Toy Engine
+  namespace Utils{
+    struct Timer{
+      Timer();
+    };
+  }
+}
+
+#endif

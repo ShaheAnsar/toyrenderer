@@ -19,5 +19,5 @@ void main() {
   gl_Position = mvp * vec4(pos, 1.0f);
   opos = ( model * vec4(pos, 1.0f) ).xyz;
   ouv = uv;
-  onormal = ( model*vec4( normal, 0.0f ) ).xyz;
+  onormal = normalize( ( model*vec4( normal, 0.0f ) ).xyz );
 }

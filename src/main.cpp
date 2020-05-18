@@ -34,6 +34,7 @@
 #include <engine2D.hpp>
 #include <texture.hpp>
 #include <mesh.hpp>
+#include <meshinstance.hpp>
 
 #define HEIGHT 720
 #define WIDTH 1280
@@ -41,6 +42,17 @@
 GLFWwindow *win = nullptr;
 std::fstream glog("g.log", std::ios::out | std::ios::trunc);
 std::fstream flog("f.log", flog.trunc | flog.out);
+
+
+std::vector<float> quad{
+			//Pos, UV
+			-1.0f, -1.0f, 0.0f, 0.0f,
+			1.0f, -1.0f, 1.0f, 0.0f,
+			1.0f, 1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f, 1.0f,
+			-1.0f, 1.0f, 0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f,
+};
 
 struct uniform_buffer_3d {
   glm::mat4 mvp;
@@ -82,6 +94,11 @@ std::string to_string(const glm::vec3& a) {
   return std::string("<") + std::to_string(a.x) + "," + std::to_string(a.y) + "," + std::to_string(a.z) + ">"; 
 }
 
+std::string to_string(const glm::vec4& a) {
+  return std::string("<") + std::to_string(a.x) + "," + std::to_string(a.y) + "," + std::to_string(a.z) +
+    "," + std::to_string(a.w) + ">"; 
+}
+
 
 logger::logger mlog(std::cout);
 
@@ -107,6 +124,7 @@ int main(void) {
     std::cerr << "Unable to initialize window";
     std::exit(-1);
   }
+  glfwSwapInterval(1);
   glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   if(!glfwRawMouseMotionSupported())
     mlog << std::make_pair<logger::pri, std::string>(logger::pri::ERR,
@@ -126,6 +144,8 @@ int main(void) {
   glEnable(GL_STENCIL_TEST);
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEBUG_OUTPUT);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glViewport(0, 0, WIDTH, HEIGHT);
  int tw = 0, th = 0, tn = 0;
   unsigned char* td = stbi_load("assets/woodfloor.png", &tw, &th, &tn, 0);
@@ -203,7 +223,7 @@ int main(void) {
 		  if(ambient_exists) {
 		    std::string tex_name = m_t.ambient_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
-		    m.ambient_t = std::make_optional(Rend::Texture("assets/sponza/" + tex_name));
+		    m.ambient_t = std::make_optional(Rend::Texture("assets/sponza/" + tex_name, GL_RGBA));
 		  }
 		  else {
 		    m.ambient_t = std::nullopt;
@@ -211,7 +231,7 @@ int main(void) {
 		  if(diffuse_exists) {
 		    std::string tex_name = m_t.diffuse_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
-		    m.diffuse_t = std::make_optional(Rend::Texture("assets/sponza/" + tex_name));
+		    m.diffuse_t = std::make_optional(Rend::Texture("assets/sponza/" + tex_name, GL_RGBA));
 		  }
 		  else {
 		    m.diffuse_t = std::nullopt;
@@ -220,18 +240,38 @@ int main(void) {
 		  if(specular_exists) {
 		    std::string tex_name = m_t.specular_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
-		    m.specular_t = std::make_optional(Rend::Texture("assets/sponza/" + tex_name));
+		    m.specular_t = std::make_optional(Rend::Texture("assets/sponza/" + tex_name, GL_RGBA));
 		  }
 		  else {
 		    m.specular_t = std::nullopt;
 		  }
 
 		};
-  auto fn_null = []() -> void {};
-  Rend::Mesh<basic_mat, void (*)(basic_mat&, tinyobj::material_t&), void(*)()>
-    sponza_test("assets/sponza/sponza.obj", "assets/sponza/", fn_null, fn_mat);
-  Rend::Mesh<basic_mat, void (*)(basic_mat&, tinyobj::material_t&), void(*)()>
-    buddha("assets/buddha/buddha.obj", "assets/buddha/", fn_null, fn_mat);
+  Rend::Mesh<basic_mat, void (*)(basic_mat&, tinyobj::material_t&)>
+    sponza_test("assets/sponza/sponza.obj", "assets/sponza/", fn_mat);
+  flog << "Regarding Sponza:\n"
+       << "Materials: " << sponza_test.mats.size() << std::endl;
+  for(const auto& i : sponza_test.mats) {
+    flog << "Material Info =>\n"
+	 << "Ambient Color: " << to_string(i.mat_ubo.ambient_c) << "\n" 
+	 << "Diffuse Color: " << to_string(i.mat_ubo.diffuse_c) << "\n"
+	 << "Specular Color: " << to_string(i.mat_ubo.specular_c) << "\n"
+	 << "Ambient Texture: " << std::to_string(i.ambient_t.has_value()) << "\n"
+	 << "Diffuse Texture: " << std::to_string(i.diffuse_t.has_value()) << "\n"
+	 << "Specular Texture: " << std::to_string(i.specular_t.has_value()) << std::endl;
+  }
+  for(const auto&[mat_id, i, len] : sponza_test.mat_tuples) {
+    flog << "------\n"
+	 << "MAT ID: " << mat_id << "\n"
+	 << "I: " << i << "\n"
+	 << "LEN: " << len << "\n"
+	 << "------" << std::endl;
+  }
+  Rend::MeshInstance<basic_mat, void(*)(basic_mat&, tinyobj::material_t&)> sponza_inst;
+  sponza_inst.mesh_ptr = &sponza_test;
+  Rend::Mesh<basic_mat, void (*)(basic_mat&, tinyobj::material_t&)>
+    buddha("assets/buddha/buddha.obj", "assets/buddha/", fn_mat);
+  Rend::MeshInstance<basic_mat, void(*)(basic_mat&, tinyobj::material_t&)> budda_inst[5];
   Rend::Texture cel_shade("assets/LUTS/cel_shade.png");
   cel_shade.bind(0);
   cel_shade.set_param(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -266,6 +306,74 @@ int main(void) {
   glBindVertexArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+  #define SPONZA_FB 0
+  #define BUDDHA_FB 1
+  GLuint fbs[2];
+  glGenFramebuffers(2, fbs);
+  flog << "Framebuffers: " << fbs[0] << ", " << fbs[1] << std::endl;
+  glBindFramebuffer(GL_FRAMEBUFFER,fbs[SPONZA_FB]);
+  GLuint fb_texs[4];
+  glGenTextures(4, fb_texs);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, fb_texs[2*SPONZA_FB]);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+  glBindTexture(GL_TEXTURE_2D, fb_texs[2*SPONZA_FB + 1]);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, WIDTH, HEIGHT, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+  glBindTexture(GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB]);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+  glBindTexture(GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB + 1]);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, WIDTH, HEIGHT, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fb_texs[2*SPONZA_FB],0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, fb_texs[2*SPONZA_FB + 1],0);
+  if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+    glog << "[ERROR] Sponza framebuffer incomplete" << std::endl;
+  }
+  glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB],0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB + 1],0);
+  if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+    glog << "[ERROR] Buddha framebuffer incomplete" << std::endl;
+  }
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  GLuint quad_vao;
+  GLuint quad_vbo;
+  glGenVertexArrays(1, &quad_vao);
+  glGenBuffers(1, &quad_vbo);
+  glBindVertexArray(quad_vao);
+  glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
+  glBufferData(GL_ARRAY_BUFFER, quad.size() * sizeof(float),
+	       quad.data(), GL_STATIC_DRAW);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), 0);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)( sizeof(float)*2 ));
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  glBindVertexArray(0);
+  Rend::Shader quad_v("shaders/quad_sponza_buddha_v.spv", GL_VERTEX_SHADER);
+  Rend::Shader quad_f("shaders/quad_sponza_buddha_f.spv", GL_FRAGMENT_SHADER);
+  Rend::ShaderProgram quad_prog({quad_v, quad_f});
+  
+
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
   (void)io;
@@ -296,6 +404,8 @@ int main(void) {
   glGenBuffers(1, &debug_ubo_name);
   glBindBufferBase(GL_UNIFORM_BUFFER, 3, debug_ubo_name);
   directional_light dlight;
+  dlight.color = glm::vec4{0.0f};
+  dlight.direction_intensity = glm::vec4{0.0f};
   GLuint dlight_ubo;
   glGenBuffers(1, &dlight_ubo);
   glBindBufferBase(GL_UNIFORM_BUFFER, 4, dlight_ubo);
@@ -426,8 +536,14 @@ int main(void) {
     glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::vec4), &buddha_outline_col, GL_STREAM_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbs[SPONZA_FB]);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     sponza_prog.use_program();
     glBindBufferBase(GL_UNIFORM_BUFFER, 5, sponza_ubo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbs[SPONZA_FB]);
     glBindVertexArray(sponza_test.vao);
     for(auto&[mat_i,i,len] : sponza_test.mat_tuples) {
       if(sponza_test.mats[mat_i].ambient_t.has_value())
@@ -436,13 +552,11 @@ int main(void) {
 	sponza_test.mats[mat_i].diffuse_t.value().bind(1);
       if(sponza_test.mats[mat_i].specular_t.has_value())
 	sponza_test.mats[mat_i].specular_t.value().bind(2);
-      cel_shade.bind(6);
+      cel_shade.bind(3);
       glBindBufferBase(GL_UNIFORM_BUFFER, 1, sponza_test.mats[mat_i].ubo);
       glDrawArrays(GL_TRIANGLES, 3*i, len*3);
     }
-    glStencilMask(0xff);
-    glStencilFunc(GL_ALWAYS, 1, 0xff);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
     glBindBufferBase(GL_UNIFORM_BUFFER, 5, buddha_ubo);
     glBindVertexArray(buddha.vao);
     buddha_prog.use_program();
@@ -459,35 +573,18 @@ int main(void) {
       cel_shade.bind(0);
       glDrawArrays(GL_TRIANGLES, 3*i, len*3);
     }
-    glStencilFunc(GL_NOTEQUAL, 1, 0xff);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-    buddha_modelM = glm::translate(glm::mat4(1.0f), buddha_pos);
-    buddha_modelM *= glm::scale(glm::mat4(1.0f), buddha_scale * 1.05f);
-    buddha_ubo_data.mvp = perspectiveM * viewM * buddha_modelM;
-    buddha_ubo_data.model = buddha_modelM;
-    buddha_ubo_data.normalM = glm::mat4(1.0f);
-    glBindBuffer(GL_UNIFORM_BUFFER, buddha_ubo);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(uniform_buffer_3d),
-		 &buddha_ubo_data, GL_STREAM_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER, buddha_outline_ubo);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(buddha_outline_col),
-		 &buddha_outline_col, GL_STREAM_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    buddha_outline_prog.use_program();
-    for(auto&[mat_i,i,len] : buddha.mat_tuples) {
-      if(buddha.mats.empty()) goto buddha_matskip2;
-      if(buddha.mats[mat_i].ambient_t.has_value())
-      	buddha.mats[mat_i].ambient_t.value().bind(0);
-      if(buddha.mats[mat_i].diffuse_t.has_value())
-      	buddha.mats[mat_i].diffuse_t.value().bind(1);
-      if(buddha.mats[mat_i].specular_t.has_value())
-      	buddha.mats[mat_i].specular_t.value().bind(2);
-      glBindBufferBase(GL_UNIFORM_BUFFER, 1, buddha.mats[mat_i].ubo);
-    buddha_matskip2:
-      cel_shade.bind(0);
-      glDrawArrays(GL_TRIANGLES, 3*i, len*3);
-    }
-    glStencilFunc(GL_ALWAYS, 0x00, 0x00);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, fb_texs[2*SPONZA_FB]);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, fb_texs[2*SPONZA_FB + 1]);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB]);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB + 1]);
+    glBindVertexArray(quad_vao);
+    quad_prog.use_program();
+    glDrawArrays(GL_TRIANGLES, 0, quad.size()/4);
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
