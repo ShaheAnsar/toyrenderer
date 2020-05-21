@@ -6,8 +6,8 @@ layout(location = 0) out vec3 opos;
 layout(std140, binding = 5) uniform ubo3d{
   mat4 mvp;
   mat4 model;
-  vec4 texcoord_offset;
   mat4 normalM; // normalM will contain the view * model matrix here.
+  vec4 texcoord_offset;
 };
 
 

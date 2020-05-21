@@ -11,15 +11,19 @@ layout(binding = 1) uniform sampler2D sponza_depth;
 layout(binding = 2) uniform sampler2D buddha_color;
 layout(binding = 3) uniform sampler2D buddha_depth;
 
-const float offset = 1.0/1600;
-const float threshold = 0.000000005f;
+//const float offset = 1.0/1600;
+const int offset = 1;
+const float threshold = 0.0000005f;
 
 
 vec4 compute_edge() {
-  vec2 offsets[3][3] = {
-			{vec2(-offset, -offset), vec2(0, -offset), vec2(offset, -offset)},
-			{vec2(-offset, 0), vec2(0,0), vec2(offset, 0)},
-			{vec2(-offset, offset), vec2(0,offset), vec2(offset, offset)}
+  //return vec4(1.0f);
+  ivec2 texture_size = textureSize(sponza_depth, 0);
+  ivec2 uv_raw = ivec2(uv * texture_size);
+  ivec2 offsets[3][3] = {
+			{ivec2(-offset, -offset), ivec2(0, -offset), ivec2(offset, -offset)},
+			{ivec2(-offset, 0), ivec2(0,0), ivec2(offset, 0)},
+			{ivec2(-offset, offset), ivec2(0,offset), ivec2(offset, offset)}
   };
 
 
@@ -39,8 +43,8 @@ vec4 compute_edge() {
   float g_y = 0;
   for(int j = 0; j < 3; j++) {
     for(int i = 0; i < 3; i++) {
-      g_x += sobel_x[j][i] * texture(buddha_depth, uv + offsets[j][i]).r;
-      g_y += sobel_y[j][i] * texture(buddha_depth, uv + offsets[j][i]).r;
+      g_x += sobel_x[j][i] * texelFetch(buddha_depth, uv_raw + offsets[j][i], 0).r;
+      g_y += sobel_y[j][i] * texelFetch(buddha_depth, uv_raw + offsets[j][i], 0).r;
     }
   }
   float g2 = pow(g_x,2) + pow(g_y, 2);
@@ -51,13 +55,13 @@ vec4 compute_edge() {
 }
 
 void main() {
-  float screen_offset = 0.06f; // decides how much of the screen to cut away.
+  float screen_offset = 0.00f; // decides how much of the screen to cut away.
   float rx = uv.s - 0.5f;
   float ry = uv.t - 0.5f;
   vec2 uv_offset_dir = normalize( vec2(rx, ry) );
   vec2 uv2 = vec2(rx, ry)*(0.5f - screen_offset)/0.5f + vec2(0.5f);
   float d = ( pow(rx, 2) + pow(ry, 2) )/0.5f;
-  float c = 0.005f;
+  float c = 0.00f;
   float r_c = 1*c;
   float g_c = 5*c;
   float b_c = 10*c;

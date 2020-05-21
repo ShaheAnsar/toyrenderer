@@ -23,9 +23,11 @@ layout(std140, binding = 1) uniform mat{
   vec4 specular_c;
 };
 
-layout(std140, binding = 2) uniform camera{
-  vec4 cam_pos;
-};
+layout(std140, binding = 2) uniform camera_t{
+  vec4 position;
+  vec4 up;
+  vec4 dir;
+}camera;
 
 layout(std140, binding = 3) uniform debug{
   vec4 adsn; //Ambient, Diffuse, Specular on/off
@@ -91,9 +93,11 @@ vec4 calc_specular() {
   float pfalloff = dot(pos_int.xyz - pos, pos_int.xyz - pos) * fallof_c.x
     + distance(pos_int.xyz, pos) * fallof_c.y + fallof_c.z;
 
-  float plight_c = min(1.0/pfalloff, 1.0f) * clamp( dot(normalize(reflect(pos - pos_int.xyz, normal)), normalize(cam_pos.xyz - pos)) , 0.0f, 1.0f);
+  float plight_c = min(1.0/pfalloff, 1.0f) * clamp( dot(normalize(reflect(pos - pos_int.xyz, normal)),
+							normalize(camera.position.xyz - pos)) , 0.0f, 1.0f);
   plight_c = pow(plight_c, 8);
-  float dlight_c = dlight_direction.w * clamp(dot(normalize(reflect(dlight_direction.xyz, normal)), normalize(cam_pos.xyz - pos)) , 0.0f, 1.0f);
+  float dlight_c = dlight_direction.w * clamp(dot(normalize(reflect(dlight_direction.xyz, normal)),
+						  normalize(camera.position.xyz - pos)) , 0.0f, 1.0f);
   dlight_c = pow(dlight_c, 8);
   vec4 plight_cel = vec4(texture(cel_shade_t, vec2(0, plight_c)).rgb, 1.0f);
   vec4 dlight_cel = vec4(texture(cel_shade_t, vec2(0, dlight_c)).rgb, 1.0f);

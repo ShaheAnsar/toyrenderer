@@ -5,6 +5,7 @@ layout(location = 4) in vec3 normal;
 
 layout(location = 0) out vec4 color;
 
+
 layout(std140, binding = 0) uniform plight{
   vec4 pos_int; // Position and Intensity
   vec4 pcolor;
@@ -22,13 +23,20 @@ layout(std140, binding = 1) uniform mat{
   vec4 specular_c;
 };
 
-layout(std140, binding = 2) uniform camera{
-  vec4 cam_pos;
-};
+layout(std140, binding = 2) uniform camera_t{
+  vec4 position;
+  vec4 up;
+  vec4 dir;
+}camera;
 
 layout(std140, binding = 3) uniform debug{
   vec4 adsn; //Ambient, Diffuse, Specular on/off
 };
+
+layout(std140, binding = 20) uniform engineInterface_t{
+  float time;
+  float dt;
+}engineInterface;
 
 layout(binding = 0) uniform sampler2D cel_shade;
 
@@ -56,7 +64,7 @@ vec4 calc_specular(){
     + distance(pos_int.xyz, pos) * fallof_c.y + fallof_c.z;
 
   float t = min(1.0f, 1.0f/pfalloff) * clamp(dot(normalize( reflect(pos - pos_int.xyz, normal) ),
-		      normalize( cam_pos.xyz - pos)), 0.0f, 1.0f);
+		      normalize( camera.position.xyz - pos)), 0.0f, 1.0f);
   t = pow(t, 32);
   //return vec4(vec3(t), 1.0f);
   //return vec4( texture(cel_shade, vec2(0, t)).rgb, 1.0f );

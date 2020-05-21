@@ -9,6 +9,8 @@
 #include <memory>
 #include <fstream>
 #include <optional>
+#include <chrono>
+#include <thread>
 
 #include <unistd.h>
 
@@ -30,13 +32,20 @@
 #include <imgui_impl_opengl3.h>
 
 
+
+
 #include <logger.hpp>
+#include <common.hpp>
 #include <shader.hpp>
 #include <engine2D.hpp>
 #include <texture.hpp>
 #include <mesh.hpp>
 #include <meshinstance.hpp>
 #include <primitivegen.hpp>
+#include <uniformbuffer.hpp>
+#include <camera.hpp>
+
+
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -110,41 +119,8 @@ std::vector<float> skyboxVertices = {
      1.0f, -1.0f,  1.0f
 };
 
-struct uniform_buffer_3d {
-  glm::mat4 mvp;
-  glm::mat4 model;
-  glm::vec4 texcoord_offset;
-  glm::mat4 normalM;
-};
-
-struct point_light {
-  glm::vec4 position_intensity;
-  glm::vec4 color;
-  glm::vec4 falloff_constants;
-};
-
-struct directional_light {
-  glm::vec4 direction_intensity;
-  glm::vec4 color;
-};
-struct debug_ubo {
-  glm::vec4 adsn;
-};
 
 
-struct basic_mat_ubo {
-  glm::vec4 ambient_c;
-  glm::vec4 diffuse_c;
-  glm::vec4 specular_c;
-};
-
-struct basic_mat {
-  GLuint ubo;
-  basic_mat_ubo mat_ubo;
-  std::optional<Rend::Texture> ambient_t;
-  std::optional<Rend::Texture> diffuse_t;
-  std::optional<Rend::Texture> specular_t;
-};
 
 std::string to_string(const glm::vec3& a) {
   return std::string("<") + std::to_string(a.x) + "," + std::to_string(a.y) + "," + std::to_string(a.z) + ">"; 
@@ -228,12 +204,17 @@ int main(void) {
   Rend::Texture t("./assets/woodfloor.png");
   t.bind(3);
   program3d.use_program();
+
+  Rend::UniformBuffer<engine_gl_ubo> engineGlUBO;
+  engineGlUBO.buffer.time = 0;
+  engineGlUBO.buffer.dt = 0;
   uniform_buffer_3d sponza_ubo_data = {
 				       glm::perspective(glm::radians(45.0f), 16.0f/9.0f, 0.1f,
 							10000.0f)*
 				       glm::lookAt(glm::vec3{1000.0f, 1000.0f, 1000.0f},
 						   glm::vec3{0.0f, 0.0f, 0.0f},
 						   glm::vec3{0.0f, 1.0f, 0.0f}),
+				       glm::mat4(1.0f),
 				       glm::mat4(1.0f),
 				       glm::vec4(0.0f)
   };
@@ -345,11 +326,8 @@ int main(void) {
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(sizeof(float)*3));
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
-  uniform_buffer_3d buddha_ubo_data{
-			       
-  };
-  GLuint buddha_ubo;
-  glGenBuffers(1, &buddha_ubo);
+  Rend::UniformBuffer buddha_ubo(uniform_buffer_3d{
+    });
   sponza_prog.use_program();
   glBindVertexArray(sponza_test.vao);
   glBindBuffer(GL_ARRAY_BUFFER, sponza_test.vbo);
@@ -481,8 +459,8 @@ int main(void) {
   skybox_ubo_data = {
 		     glm::mat4(1.0f),
 		     glm::mat4(1.0f),
-		     glm::vec4(0.0f),
-		     glm::mat4(1.0f)
+		     glm::mat4(1.0f),
+		     glm::vec4(0.0f)
   };
   
 
@@ -494,6 +472,8 @@ int main(void) {
   ImGui_ImplOpenGL3_Init("#version 150");
 
   
+
+  Rend::DebugCamera mainDCamera;
 
   float time = glfwGetTime();
   float dt = 0;
@@ -545,7 +525,7 @@ int main(void) {
     ImGui::NewFrame();
     ImGui::Begin("Debug");
     ImGui::InputFloat("Movement Speed", &movement_speed);
-    ImGui::InputFloat("Camera FOV", &camera_fov);
+    ImGui::InputFloat("Camera FOV", &mainDCamera.fov);
     ImGui::InputFloat("Ambient Scaler", &debug_ubo_1.adsn[0]);
     ImGui::InputFloat("Diffuse Scaler", &debug_ubo_1.adsn[1]);
     ImGui::InputFloat("Specular Scaler", &debug_ubo_1.adsn[2]);
@@ -556,6 +536,9 @@ int main(void) {
     ImGui::InputFloat3("Buddha Position", &buddha_pos[0]);
     ImGui::InputFloat3("Buddha Scale", &buddha_scale[0]);
     ImGui::ColorEdit3("Buddha Outline Color", &buddha_outline_col[0]);
+    ImGui::InputFloat3("Sponza Position", &sponza_inst.position[0]);
+    ImGui::InputFloat3("Sponza Scale", &sponza_inst.scale[0]);
+    ImGui::InputFloat4("Sponza Rotation [u, vhat]", &sponza_inst.rotation[0]);
     bool reload_buddha_shaders = ImGui::Button("Reload Buddha Shader");
     if(reload_buddha_shaders) {
       buddha_prog.reload();
@@ -564,7 +547,7 @@ int main(void) {
       quad_prog.reload();
     }
 
-    perspectiveM = glm::perspective(glm::radians(camera_fov), 16.0f/9.0f, 0.1f, 10000.f);
+    perspectiveM = mainDCamera.getPerspectiveM();
     if (init) {
       glfwGetCursorPos(win, &mouse_posp.first, &mouse_posp.second);
       init = false;
@@ -582,28 +565,36 @@ int main(void) {
       vertical_angle += mouse_speed * dt * (mouse_posp.second - mouse_posc.second);
       vertical_angle = std::clamp(vertical_angle, glm::radians(-70.0f), glm::radians(70.0f));
     }
-    glm::vec3 camera_dir{std::cos(vertical_angle)*std::sin(horizontal_angle), std::sin(vertical_angle),
-			 -std::cos(vertical_angle)*std::cos(horizontal_angle)};
+    mainDCamera.ubo.buffer.dir = glm::vec4{std::cos(vertical_angle)*std::sin(horizontal_angle),
+					   std::sin(vertical_angle),
+					   -std::cos(vertical_angle)*std::cos(horizontal_angle), 0.0f};
 
     if(Q_KEY_pressed == GLFW_PRESS) {
-      camera_pos += movement_speed * dt * glm::vec3(0.0f, 1.0f, 0.0f);
+      mainDCamera.ubo.buffer.position += movement_speed * dt * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
     }
     if(E_KEY_pressed == GLFW_PRESS) {
-      camera_pos -= movement_speed * dt * glm::vec3(0.0f, 1.0f, 0.0f);
+      mainDCamera.ubo.buffer.position -= movement_speed * dt * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
     }
     if(W_KEY_pressed == GLFW_PRESS) {
-      camera_pos += movement_speed * dt * camera_dir;
+      mainDCamera.ubo.buffer.position += movement_speed * dt * mainDCamera.ubo.buffer.dir;
     }
     if(S_KEY_pressed == GLFW_PRESS) {
-      camera_pos -= movement_speed * dt * camera_dir;
+      mainDCamera.ubo.buffer.position -= movement_speed * dt * mainDCamera.ubo.buffer.dir;
     }
     if(A_KEY_pressed == GLFW_PRESS) {
-      camera_pos -= movement_speed * dt * glm::cross(camera_dir, glm::vec3{0.0f, 1.0f, 0.0f});
+      mainDCamera.ubo.buffer.position -= movement_speed * dt *
+	glm::vec4( glm::cross(glm::vec3( mainDCamera.ubo.buffer.dir ),
+			      glm::vec3{0.0f, 1.0f, 0.0f}), 1.0f );
       //stub
     }
     if(D_KEY_pressed == GLFW_PRESS) {
-      camera_pos += movement_speed * dt * glm::cross(camera_dir, glm::vec3{0.0f, 1.0f, 0.0f});
+      //mainDCamera.ubo.buffer.position camera_pos += movement_speed * dt * glm::cross(camera_dir, glm::vec3{0.0f, 1.0f, 0.0f});
+      mainDCamera.ubo.buffer.position += movement_speed * dt *
+	glm::vec4( glm::cross(glm::vec3( mainDCamera.ubo.buffer.dir ),
+			      glm::vec3{0.0f, 1.0f, 0.0f}), 1.0f );
+
       //stub
+
     }
     if(R_KEY_pressed == GLFW_PRESS) {
 #define R_KEY_TIMER_THRESHOLD 0.5
@@ -624,17 +615,18 @@ int main(void) {
     ImGui::BeginChild("Scrolling");
     ImGui::Text("Horizontal Angle: %f", horizontal_angle);
     ImGui::Text("Vertical Angle: %f", vertical_angle);
-    ImGui::Text("Camera Position: <%f,%f,%f>", camera_pos.x, camera_pos.y, camera_pos.z);
+    ImGui::Text("Camera Position: <%f,%f,%f>", mainDCamera.ubo.buffer.position.x,
+		mainDCamera.ubo.buffer.position.y,
+		mainDCamera.ubo.buffer.position.z);
     ImGui::Text("Frametime: %f ms", dt*1000);
     ImGui::Text("FPS: %f", 1/dt);
     ImGui::EndChild();
     ImGui::End();
-    glm::mat4 viewM = glm::lookAt(camera_pos,
-				  camera_pos + camera_dir,
-				  glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 viewM = mainDCamera.getViewM();
     buddha_modelM = glm::translate(glm::mat4(1.0f), buddha_pos);
     buddha_modelM *= glm::scale(glm::mat4(1.0f), buddha_scale);
-    sponza_ubo_data.mvp = perspectiveM * viewM;
+    //sponza_ubo_data.mvp = perspectiveM * viewM;
+    uniform_buffer_3d& buddha_ubo_data = buddha_ubo.buffer;
     buddha_ubo_data.mvp = perspectiveM * viewM * buddha_modelM;
     buddha_ubo_data.model = buddha_modelM;
     buddha_ubo_data.normalM = glm::transpose(glm::inverse(buddha_modelM));
@@ -643,24 +635,28 @@ int main(void) {
     skybox_ubo_data.mvp = perspectiveM * viewM_skybox;
     skybox_ubo_data.normalM = viewM_skybox;
     glBindBuffer(GL_UNIFORM_BUFFER, sponza_ubo);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(uniform_buffer_3d), &sponza_ubo_data, GL_STREAM_DRAW);
-    camera_ubo_data = glm::vec4(camera_pos, 1.0f);
-    glBindBuffer(GL_UNIFORM_BUFFER, camera_ubo);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(camera_ubo_data), &camera_ubo_data, GL_STREAM_DRAW);
+    //glBufferData(GL_UNIFORM_BUFFER, sizeof(uniform_buffer_3d), &sponza_ubo_data, GL_STREAM_DRAW);
+    //camera_ubo_data = glm::vec4(camera_pos, 1.0f);
+    //glBindBuffer(GL_UNIFORM_BUFFER, camera_ubo);
+    //glBufferData(GL_UNIFORM_BUFFER, sizeof(camera_ubo_data), &camera_ubo_data, GL_STREAM_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, debug_ubo_name);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(debug_ubo), &debug_ubo_1, GL_STREAM_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, dlight_ubo);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(dlight), &dlight, GL_STREAM_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, sponza_light_ubo);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(sponza_light), &sponza_light, GL_STREAM_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER, buddha_ubo);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(uniform_buffer_3d), &buddha_ubo_data, GL_STREAM_DRAW);
+    buddha_ubo.upload();
     glBindBuffer(GL_UNIFORM_BUFFER, buddha_outline_ubo);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::vec4), &buddha_outline_col, GL_STREAM_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, skybox_ubo);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(uniform_buffer_3d), &skybox_ubo_data,
 		 GL_STREAM_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    engineGlUBO.upload();
+    engineGlUBO.bind(20);
+    mainDCamera.tick();
+    mainDCamera.ubo.bind(2);
+    sponza_inst.tick(perspectiveM, viewM);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, fbs[SPONZA_FB]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -676,10 +672,10 @@ int main(void) {
     //    glDrawArrays(GL_TRIANGLES, 0, skyboxVertices.size()/3);
     glDepthMask(GL_TRUE);
     sponza_prog.use_program();
-    glBindBufferBase(GL_UNIFORM_BUFFER, 5, sponza_ubo);
+    //glBindBufferBase(GL_UNIFORM_BUFFER, 5, sponza_ubo);
+    sponza_inst.ubo.bind(5);
     glBindVertexArray(sponza_test.vao);
     for(auto&[mat_i,i,len] : sponza_test.mat_tuples) {
-      cel_shade.reload();
       if(sponza_test.mats[mat_i].ambient_t.has_value())
 	sponza_test.mats[mat_i].ambient_t.value().bind(0);
       if(sponza_test.mats[mat_i].diffuse_t.has_value())
@@ -698,7 +694,8 @@ int main(void) {
     glDrawArrays(GL_TRIANGLES, 0, skyboxVertices.size() / 3);
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
-    glBindBufferBase(GL_UNIFORM_BUFFER, 5, buddha_ubo);
+    //glBindBufferBase(GL_UNIFORM_BUFFER, 5, buddha_ubo);
+    buddha_ubo.bind(5);
     glBindVertexArray(buddha.vao);
     buddha_prog.use_program();
     for(auto&[mat_i,i,len] : buddha.mat_tuples) {
@@ -735,6 +732,12 @@ int main(void) {
 
     dt = glfwGetTime() - time;
     time += dt;
+    engineGlUBO.buffer.dt = dt;
+    engineGlUBO.buffer.time = time;
+    
+    //if(dt < 0.0166) {
+    //  std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>( std::floor(16.6 - 1000*dt) )));
+    //}
     R_KEY_timer += dt;
     mouse_posp = mouse_posc;
 

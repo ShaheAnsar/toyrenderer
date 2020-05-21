@@ -1,5 +1,5 @@
 #ifndef MY_PRIMITIVE_GEN
-#define PRIMITIVE_GEN
+#define MY_PRIMITIVE_GEN
 
 #include <vector>
 

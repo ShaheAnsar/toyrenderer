@@ -10,8 +10,8 @@ layout(location = 4) out vec3 onormal;
 layout(std140, binding = 5) uniform uniform_buffer {
   mat4 mvp;
   mat4 model;
-  vec4 texcoord_offset;
   mat4 normalM;
+  vec4 texcoord_offset;
 };
 
 void main() {
