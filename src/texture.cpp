@@ -13,7 +13,7 @@ using namespace Rend;
 extern logger::logger mlog;
 extern std::fstream flog;
 
-void Texture::load_texture(std::string path, GLenum internal_image_format) {
+void Texture::load_texture(const std::string& path, GLenum internal_image_format){
   glGenTextures(1, &tex_id);
   int tw = 0, th = 0, tn = 0;
   unsigned char *td = stbi_load(path.c_str(), &tw, &th, &tn, 0);
@@ -31,15 +31,25 @@ void Texture::load_texture(std::string path, GLenum internal_image_format) {
   stbi_image_free(td);
   mlog << "Successfully loaded texture " + std::to_string(tex_id);
   flog << "Texture: " << path << ", Image Format: " << std::to_string(tn) << std::endl;
-
 }
 
-Texture::Texture(std::string path){
-  load_texture(path);
+void Texture::reload(){
+  glDeleteTextures(1, &tex_id);
+  flog << "Reloading Texture" << std::endl;
+  this->load_texture(path, internal_image_format);
 }
 
-Texture::Texture(std::string path, GLenum internal_image_format){
+//Texture::Texture(std::string path){
+//  load_texture(path);
+//}
+
+Texture::Texture(std::string path, GLenum internal_image_format) :
+  internal_image_format(internal_image_format), path(path.c_str()){
   load_texture(path, internal_image_format);
+}
+
+Texture::~Texture() {
+  //glDeleteTextures(1, &tex_id);
 }
 
 void Texture::bind(GLuint slot) {
@@ -50,4 +60,3 @@ void Texture::bind(GLuint slot) {
 void Texture::set_param(GLuint parameter, GLuint option) {
   glTexParameteri(GL_TEXTURE_2D, parameter, option);
 }
-

@@ -11,8 +11,8 @@ layout(binding = 1) uniform sampler2D sponza_depth;
 layout(binding = 2) uniform sampler2D buddha_color;
 layout(binding = 3) uniform sampler2D buddha_depth;
 
-const float offset = 1.0/1000;
-const float threshold = 0.00000001f;
+const float offset = 1.0/1600;
+const float threshold = 0.000000005f;
 
 
 vec4 compute_edge() {
@@ -51,13 +51,42 @@ vec4 compute_edge() {
 }
 
 void main() {
+  float screen_offset = 0.06f; // decides how much of the screen to cut away.
+  float rx = uv.s - 0.5f;
+  float ry = uv.t - 0.5f;
+  vec2 uv_offset_dir = normalize( vec2(rx, ry) );
+  vec2 uv2 = vec2(rx, ry)*(0.5f - screen_offset)/0.5f + vec2(0.5f);
+  float d = ( pow(rx, 2) + pow(ry, 2) )/0.5f;
+  float c = 0.005f;
+  float r_c = 1*c;
+  float g_c = 5*c;
+  float b_c = 10*c;
+
   vec4 front_col;
-  if(texture(sponza_depth, uv).x < texture(buddha_depth, uv).x) {
-    front_col = texture(sponza_color, uv);
+  if(texture(sponza_depth, uv).x <= texture(buddha_depth, uv).x) {
+    front_col = texture(sponza_color,uv2 + uv_offset_dir*r_c*d) * vec4(1.0f, 0.0f, 0.0f, 0.0f);
+    front_col += texture(sponza_color,uv2 + uv_offset_dir*g_c*d) * vec4(0.0f, 1.0f, 0.0f, 0.0f);
+    front_col += texture(sponza_color,uv2 + uv_offset_dir*b_c*d) * vec4(0.0f, 0.0f, 1.0f, 0.0f);
+    front_col += vec4(vec3(0.0f), 1.0f);
   }
   else {
     front_col = texture(buddha_color, uv);
   }
   col = compute_edge() * front_col;
-}
+    //col *= vec4(vec3(sin(uv.t * 3.14) * sin(uv.s * 3.14)), 1.0f);
 
+// Manga filter.
+//  col = vec4( vec3( col.r + col.g + col.b )/3 , 1.0f);
+//  float k = 1000.0f;
+//  float bias = - 0.0f;
+//  float func_x = k*(pow(2, ( 0.5)* k/log(k)) + pow(2, uv.s));
+//  float func_y = k*(pow(2, ( 0.5)* k/log(k)) + pow(2, uv.t));
+//  col = col * step(1 -2*col.r + bias, sin(func_x)) * step(1 -2*col.r + bias, sin(func_y));
+
+// Manga filter with an orange tint
+//  float k = 1000.0f;
+//  float bias = - 0.0f;
+//  float func_x = k*(pow(2, ( 0.5)* k/log(k)) + pow(2, uv.s));
+//  float func_y = k*(pow(2, ( 0.5)* k/log(k)) + pow(2, uv.t));
+//  col = col * step(1 -2*col.r + bias, sin(func_x)) * step(1 -2*col.r + bias, sin(func_y));
+}

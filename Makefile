@@ -17,10 +17,12 @@ LDFLAGS=`pkg-config --libs glfw3 vulkan`  -pthread -ldl
 INCLUDE=-I./include
 
 
-.PHONY: all clean test
+.PHONY: all clean test shaders
 
 all: $(OBJ) $(SPIRV)
 	$(CXX) $(CXXFLAGS) $(OBJ) -o $(TARGET) $(LDFLAGS)
+
+shaders: $(SPIRV)
 
 obj/%.o: src/%.cpp
 	-mkdir -p $(dir $@)

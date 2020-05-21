@@ -12,8 +12,9 @@
 
 #include <unistd.h>
 
-#undef TINYOBJLOADER_IMPLEMENTATION
+#define TINYOBJLOADER_IMPLEMENTATION
 #include <../include/tiny_obj_loader.h>
+#undef TINYOBJLOADER_IMPLEMENTATION
 #include <../include/glad/glad.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <../include/stb_image.h>
@@ -35,9 +36,10 @@
 #include <texture.hpp>
 #include <mesh.hpp>
 #include <meshinstance.hpp>
+#include <primitivegen.hpp>
 
-#define HEIGHT 720
 #define WIDTH 1280
+#define HEIGHT 720
 
 GLFWwindow *win = nullptr;
 std::fstream glog("g.log", std::ios::out | std::ios::trunc);
@@ -52,6 +54,60 @@ std::vector<float> quad{
 			1.0f, 1.0f, 1.0f, 1.0f,
 			-1.0f, 1.0f, 0.0f, 1.0f,
 			-1.0f, -1.0f, 0.0f, 0.0f,
+};
+
+std::vector<float> quad2{
+			 -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+			 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			 -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+			 -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+			 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+			 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f
+};
+
+std::vector<float> skyboxVertices = {
+    // positions          
+    -1.0f,  1.0f, -1.0f,
+    -1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+    -1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+
+    -1.0f, -1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+
+    -1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+    -1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f
 };
 
 struct uniform_buffer_3d {
@@ -146,6 +202,7 @@ int main(void) {
   glEnable(GL_DEBUG_OUTPUT);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glDepthFunc(GL_LEQUAL);
   glViewport(0, 0, WIDTH, HEIGHT);
  int tw = 0, th = 0, tn = 0;
   unsigned char* td = stbi_load("assets/woodfloor.png", &tw, &th, &tn, 0);
@@ -204,7 +261,7 @@ int main(void) {
   glBindBufferBase(GL_UNIFORM_BUFFER, 0, 0);
   glBindBufferBase(GL_UNIFORM_BUFFER, 0, sponza_light_ubo);
   glBindBufferBase(GL_UNIFORM_BUFFER, 5, sponza_ubo);
-  glBindBuffer(GL_UNIFORM_BUFFER, sponza_ubo);
+  glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
   auto fn_mat = [](basic_mat& m, tinyobj::material_t& m_t) -> void {
 		  bool ambient_exists = !m_t.ambient_texname.empty();
@@ -271,7 +328,6 @@ int main(void) {
   sponza_inst.mesh_ptr = &sponza_test;
   Rend::Mesh<basic_mat, void (*)(basic_mat&, tinyobj::material_t&)>
     buddha("assets/buddha/buddha.obj", "assets/buddha/", fn_mat);
-  Rend::MeshInstance<basic_mat, void(*)(basic_mat&, tinyobj::material_t&)> budda_inst[5];
   Rend::Texture cel_shade("assets/LUTS/cel_shade.png");
   cel_shade.bind(0);
   cel_shade.set_param(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -305,7 +361,7 @@ int main(void) {
   glEnableVertexAttribArray(2);
   glBindVertexArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+  
   #define SPONZA_FB 0
   #define BUDDHA_FB 1
   GLuint fbs[2];
@@ -372,6 +428,62 @@ int main(void) {
   Rend::Shader quad_v("shaders/quad_sponza_buddha_v.spv", GL_VERTEX_SHADER);
   Rend::Shader quad_f("shaders/quad_sponza_buddha_f.spv", GL_FRAGMENT_SHADER);
   Rend::ShaderProgram quad_prog({quad_v, quad_f});
+
+  GLuint skybox;
+  glGenTextures(1, &skybox);
+  glActiveTexture(GL_TEXTURE3);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+  std::string skybox_paths[6] = {
+				 "assets/skybox/""right"".jpg",
+				 "assets/skybox/""left"".jpg",
+				 "assets/skybox/""top"".jpg",
+				 "assets/skybox/""bottom"".jpg",
+				 "assets/skybox/""front"".jpg",
+				 "assets/skybox/""back"".jpg"
+  };
+  stbi_set_flip_vertically_on_load(false);
+  for(std::size_t i = 0; i < 6; i++) {
+    int tw = 0, th = 0, tn = 0;
+    unsigned char* data = stbi_load(skybox_paths[i].c_str(), &tw, &th, &tn, 0);
+    if(!data) {
+      flog << "Unable to load in texture: " << skybox_paths[i] << std::endl;
+    }
+    GLenum imageformat = GL_RGB;
+    if(tn > 3)
+      imageformat = GL_RGBA;
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, tw, th, 0, imageformat,
+		 GL_UNSIGNED_BYTE, data);
+    stbi_image_free(data);
+  }
+  stbi_set_flip_vertically_on_load(true);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  GLuint skybox_vao;
+  GLuint skybox_vbo;
+  glGenVertexArrays(1, &skybox_vao);
+  glGenBuffers(1, &skybox_vbo);
+  glBindVertexArray(skybox_vao);
+  glBindBuffer(GL_ARRAY_BUFFER, skybox_vbo);
+  glBufferData(GL_ARRAY_BUFFER, (skyboxVertices.size() * sizeof(float)), skyboxVertices.data(),
+	       GL_STATIC_DRAW);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
+  glEnableVertexAttribArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  Rend::Shader skybox_vert("shaders/skybox_v.spv", GL_VERTEX_SHADER);
+  Rend::Shader skybox_frag("shaders/skybox_f.spv", GL_FRAGMENT_SHADER);
+  Rend::ShaderProgram skybox_prog({skybox_vert, skybox_frag});
+  GLuint skybox_ubo;
+  glGenBuffers(1, &skybox_ubo);
+  uniform_buffer_3d skybox_ubo_data;
+  skybox_ubo_data = {
+		     glm::mat4(1.0f),
+		     glm::mat4(1.0f),
+		     glm::vec4(0.0f),
+		     glm::mat4(1.0f)
+  };
   
 
   ImGui::CreateContext();
@@ -411,7 +523,7 @@ int main(void) {
   glBindBufferBase(GL_UNIFORM_BUFFER, 4, dlight_ubo);
   std::pair<double, double> mouse_posp;
   std::pair<double, double> mouse_posc;
-  float mouse_speed = 3.0f;
+  float mouse_speed = 0.5f;
   float horizontal_angle = 0.f;
   float vertical_angle = 0.f;
   float camera_fov = 60.0f;
@@ -444,7 +556,14 @@ int main(void) {
     ImGui::InputFloat3("Buddha Position", &buddha_pos[0]);
     ImGui::InputFloat3("Buddha Scale", &buddha_scale[0]);
     ImGui::ColorEdit3("Buddha Outline Color", &buddha_outline_col[0]);
-      
+    bool reload_buddha_shaders = ImGui::Button("Reload Buddha Shader");
+    if(reload_buddha_shaders) {
+      buddha_prog.reload();
+    }
+    if(ImGui::Button("Reload Sponza Buddha FB Shader")) {
+      quad_prog.reload();
+    }
+
     perspectiveM = glm::perspective(glm::radians(camera_fov), 16.0f/9.0f, 0.1f, 10000.f);
     if (init) {
       glfwGetCursorPos(win, &mouse_posp.first, &mouse_posp.second);
@@ -461,6 +580,7 @@ int main(void) {
     if(!raw_motion_disabled) {
       horizontal_angle += mouse_speed * dt * (mouse_posc.first - mouse_posp.first);
       vertical_angle += mouse_speed * dt * (mouse_posp.second - mouse_posc.second);
+      vertical_angle = std::clamp(vertical_angle, glm::radians(-70.0f), glm::radians(70.0f));
     }
     glm::vec3 camera_dir{std::cos(vertical_angle)*std::sin(horizontal_angle), std::sin(vertical_angle),
 			 -std::cos(vertical_angle)*std::cos(horizontal_angle)};
@@ -509,7 +629,6 @@ int main(void) {
     ImGui::Text("FPS: %f", 1/dt);
     ImGui::EndChild();
     ImGui::End();
-    glBindBuffer(GL_UNIFORM_BUFFER, sponza_ubo);
     glm::mat4 viewM = glm::lookAt(camera_pos,
 				  camera_pos + camera_dir,
 				  glm::vec3(0.0f, 1.0f, 0.0f));
@@ -520,6 +639,10 @@ int main(void) {
     buddha_ubo_data.model = buddha_modelM;
     buddha_ubo_data.normalM = glm::transpose(glm::inverse(buddha_modelM));
     buddha_ubo_data.texcoord_offset = glm::vec4(0.0f);
+    glm::mat4 viewM_skybox = glm::mat4(glm::mat3(viewM));
+    skybox_ubo_data.mvp = perspectiveM * viewM_skybox;
+    skybox_ubo_data.normalM = viewM_skybox;
+    glBindBuffer(GL_UNIFORM_BUFFER, sponza_ubo);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(uniform_buffer_3d), &sponza_ubo_data, GL_STREAM_DRAW);
     camera_ubo_data = glm::vec4(camera_pos, 1.0f);
     glBindBuffer(GL_UNIFORM_BUFFER, camera_ubo);
@@ -534,6 +657,9 @@ int main(void) {
     glBufferData(GL_UNIFORM_BUFFER, sizeof(uniform_buffer_3d), &buddha_ubo_data, GL_STREAM_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, buddha_outline_ubo);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::vec4), &buddha_outline_col, GL_STREAM_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, skybox_ubo);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(uniform_buffer_3d), &skybox_ubo_data,
+		 GL_STREAM_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, fbs[SPONZA_FB]);
@@ -541,11 +667,19 @@ int main(void) {
     glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbs[SPONZA_FB]);
+    glDepthMask(GL_FALSE);
+    //    glBindVertexArray(skybox_vao);
+    //    glBindBufferBase(GL_UNIFORM_BUFFER, 5, skybox_ubo);
+    //    skybox_prog.use_program();
+    //    glDrawArrays(GL_TRIANGLES, 0, skyboxVertices.size()/3);
+    glDepthMask(GL_TRUE);
     sponza_prog.use_program();
     glBindBufferBase(GL_UNIFORM_BUFFER, 5, sponza_ubo);
-    glBindFramebuffer(GL_FRAMEBUFFER, fbs[SPONZA_FB]);
     glBindVertexArray(sponza_test.vao);
     for(auto&[mat_i,i,len] : sponza_test.mat_tuples) {
+      cel_shade.reload();
       if(sponza_test.mats[mat_i].ambient_t.has_value())
 	sponza_test.mats[mat_i].ambient_t.value().bind(0);
       if(sponza_test.mats[mat_i].diffuse_t.has_value())
@@ -556,6 +690,13 @@ int main(void) {
       glBindBufferBase(GL_UNIFORM_BUFFER, 1, sponza_test.mats[mat_i].ubo);
       glDrawArrays(GL_TRIANGLES, 3*i, len*3);
     }
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+    glBindVertexArray(skybox_vao);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 5, skybox_ubo);
+    skybox_prog.use_program();
+    glDrawArrays(GL_TRIANGLES, 0, skyboxVertices.size() / 3);
+
     glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
     glBindBufferBase(GL_UNIFORM_BUFFER, 5, buddha_ubo);
     glBindVertexArray(buddha.vao);
@@ -573,6 +714,7 @@ int main(void) {
       cel_shade.bind(0);
       glDrawArrays(GL_TRIANGLES, 3*i, len*3);
     }
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, fb_texs[2*SPONZA_FB]);
@@ -604,9 +746,10 @@ int main(void) {
     D_KEY_pressed = GLFW_RELEASE;
 
   }
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-    flog.close();
-    return 0;
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
+  flog.close();
+  glog.close();
+  return 0;
 }

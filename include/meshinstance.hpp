@@ -18,12 +18,14 @@ namespace Rend{
   template<typename MaterialType, typename FnType>
   struct MeshInstance{
     Mesh<MaterialType, FnType>* mesh_ptr;
-    struct ubo{
+    glm::vec3 position;
+    glm::vec3 scale;
+    struct ubo_t{
       glm::mat4 mvp;
       glm::mat4 modelM;
       glm::vec4 texcoord_offset;
       glm::mat4 normalM;
-    };
+    }ubo;
     GLuint ubo_id;
     void (*normal_calc_fn)(glm::mat4* normalM);
     Rend::ShaderProgram prog;

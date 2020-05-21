@@ -4,25 +4,26 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <atomic>
 
 #include <shader.hpp>
 #include <mesh.hpp>
 #include <texture.hpp>
 
 namespace Rend{
-  struct MeshResourceMan{
-    std::unordered_map<std::string, std::size_t> meta_name;
-    std::vector<Rend::Mesh> meshes;
-    bool reload(std::size_t i); // Reload mesh with id i. Returns true if succeeded
-    bool new_mesh(std::string path); // Load in mesh.
-    bool new_mesh(std::vector<float> vertices, std::size_t pos_off = 0,
-		  std::size_t norm_off = 0, std::size_t uv_off = 0,
-		  std::size_t pos_size = 3, std::size_t norm_size = 3, std::size_t uv_size = 2,
-		  std::size_t pos_stride = 8, std::size_t norm_stride = 8,
-		  std::size_t uv_stride = 8); // Load in mesh.
-    bool remove_mesh(std::size_t i);
-    MeshResourceMan();
-    ~MeshResourceMan();
+  namespace RMan{
+    struct Texture{
+      static unsigned char count;
+      std::vector<Rend::Texture> textures;
+      std::vector<std::string> texture_names; // Name assigned to Texture. Not necessary to be the same as the texture pathname.
+      //std::vector<std::size_t> texture_references; //Stores how many references to the texture have been given out
+      Texture(); // Initialize singleton class
+      ~Texture(); // Uninitialize it
+      void add_texture(const std::string& name, GLenum internal_image_format = GL_RGB);
+      Rend::Texture& get(std::size_t i);
+      const std::string& get_name(std::size_t n);
+      void reload_texture(std::size_t i);
+    };
   };
 };
 
