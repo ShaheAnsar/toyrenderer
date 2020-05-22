@@ -12,7 +12,12 @@
 struct engine_gl_ubo {
   float time;
   float dt;
-}; // Values that are global to the engine
+}; // Values that are global to the engine and passed to the shaders
+
+struct engine_globals {
+  std::size_t width;
+  std::size_t height;
+}; // Globals that will be used by code in the engine
 
 struct uniform_buffer_3d {
   glm::mat4 mvp;
@@ -48,3 +53,5 @@ struct basic_mat {
   std::optional<Rend::Texture> diffuse_t;
   std::optional<Rend::Texture> specular_t;
 };
+
+extern const engine_globals eGlobals;

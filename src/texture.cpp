@@ -5,6 +5,7 @@
 
 #include <fstream>
 
+#include <common.hpp>
 #include <logger.hpp>
 
 
@@ -39,17 +40,65 @@ void Texture::reload(){
   this->load_texture(path, internal_image_format);
 }
 
-//Texture::Texture(std::string path){
-//  load_texture(path);
-//}
 
 Texture::Texture(std::string path, GLenum internal_image_format) :
-  internal_image_format(internal_image_format), path(path.c_str()){
+  internal_image_format(internal_image_format), path(path.c_str()), refc(nullptr) {
+  refc = new std::size_t;
+  if(!refc)
+    flog << "Found nullpointer!";
+  *refc = 1;
   load_texture(path, internal_image_format);
 }
 
+Texture::Texture(GLenum internal_image_format):
+  internal_image_format(internal_image_format), path("FrameBufferTexture"), refc(nullptr)
+{
+  refc = new std::size_t;
+  if(!refc) {
+    flog << "Found nullpointer Texture: " << path << std::endl;
+  }
+  *refc = 1;
+  glGenTextures(1, &tex_id);
+  glBindTexture(tex_id, GL_TEXTURE_2D);
+  glTexImage2D(GL_TEXTURE_2D, 0, internal_image_format,
+	       eGlobals.width, eGlobals.height,
+	       0, internal_image_format,
+	       GL_UNSIGNED_BYTE, nullptr);
+  glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+Texture::Texture(const Texture& t) :
+  tex_id(t.tex_id), internal_image_format(t.internal_image_format), path(t.path.c_str()), refc(t.refc)
+{
+  (*refc)++;
+}
+
+Texture& Texture::operator=(const Texture& t) {
+  if(*refc <= 1) {
+    flog << "Deleting Texture" << std::endl;
+    glDeleteTextures(1, &tex_id);
+    delete refc;
+    refc = nullptr;
+  } else {
+    ( *refc )--;
+  }
+  refc = t.refc;
+  (*refc)++;
+  tex_id = t.tex_id;
+  internal_image_format = t.internal_image_format;
+  path = path.c_str();
+  return *this;
+}
+
 Texture::~Texture() {
-  //glDeleteTextures(1, &tex_id);
+  if (*refc <= 1) {
+    flog << "Deleting Texture: " << path << std::endl;
+    glDeleteTextures(1, &tex_id);
+    delete refc;
+  }
+  else {
+    (*refc)--;
+  }
 }
 
 void Texture::bind(GLuint slot) {

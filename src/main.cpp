@@ -119,6 +119,10 @@ std::vector<float> skyboxVertices = {
      1.0f, -1.0f,  1.0f
 };
 
+const engine_globals eGlobals = {
+			   WIDTH, HEIGHT
+};
+
 
 
 
@@ -145,6 +149,7 @@ void  APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum sever
 }
 
 int main(void) {
+  flog.rdbuf()->pubsetbuf(0,0);
   stbi_set_flip_vertically_on_load(true);
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -665,14 +670,7 @@ int main(void) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbs[SPONZA_FB]);
-    glDepthMask(GL_FALSE);
-    //    glBindVertexArray(skybox_vao);
-    //    glBindBufferBase(GL_UNIFORM_BUFFER, 5, skybox_ubo);
-    //    skybox_prog.use_program();
-    //    glDrawArrays(GL_TRIANGLES, 0, skyboxVertices.size()/3);
-    glDepthMask(GL_TRUE);
     sponza_prog.use_program();
-    //glBindBufferBase(GL_UNIFORM_BUFFER, 5, sponza_ubo);
     sponza_inst.ubo.bind(5);
     glBindVertexArray(sponza_test.vao);
     for(auto&[mat_i,i,len] : sponza_test.mat_tuples) {
