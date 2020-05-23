@@ -59,7 +59,7 @@ Texture::Texture(GLenum internal_image_format):
   }
   *refc = 1;
   glGenTextures(1, &tex_id);
-  glBindTexture(tex_id, GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, tex_id);
   glTexImage2D(GL_TEXTURE_2D, 0, internal_image_format,
 	       eGlobals.width, eGlobals.height,
 	       0, internal_image_format,
@@ -86,7 +86,7 @@ Texture& Texture::operator=(const Texture& t) {
   (*refc)++;
   tex_id = t.tex_id;
   internal_image_format = t.internal_image_format;
-  path = path.c_str();
+  path = t.path.c_str();
   return *this;
 }
 

@@ -67,11 +67,13 @@ FrameBuffer::~FrameBuffer() {
 
 void FrameBuffer::attach_attachments() {
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+  std::vector<FBTexture> color_attachments;
   for(const auto& i : textures) {
     GLenum attachment_type = 0;
     switch(i.type){
     case FBTextureType::COLOR_ATTACHMENT:
       attachment_type = GL_COLOR_ATTACHMENT0 + i.attachment_slot;
+      color_attachments.push_back(i);
       break;
     case FBTextureType::DEPTH_ATTACHMENT:
       attachment_type = GL_DEPTH_ATTACHMENT;
@@ -87,6 +89,16 @@ void FrameBuffer::attach_attachments() {
     }
     glFramebufferTexture2D(GL_FRAMEBUFFER, attachment_type, GL_TEXTURE_2D, i.tex.tex_id, 0);
   }
+  std::sort(color_attachments.begin(), color_attachments.end(),
+	    [](const FBTexture& a, const FBTexture& b) {
+	      return a.attachment_slot < b.attachment_slot;
+	    });
+  std::vector<GLenum> tex_ids;
+  for(const auto& i : color_attachments) {
+    tex_ids.push_back(GL_COLOR_ATTACHMENT0 + i.attachment_slot);
+  }
+  glDrawBuffers(tex_ids.size(),
+		tex_ids.data());
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 

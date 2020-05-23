@@ -44,6 +44,7 @@
 #include <primitivegen.hpp>
 #include <uniformbuffer.hpp>
 #include <camera.hpp>
+#include <framebuffer.hpp>
 
 
 
@@ -382,9 +383,9 @@ int main(void) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-  GLuint buddha_normal_tex;
-  glGenTextures(1, &buddha_normal_tex);
-  glBindTexture(GL_TEXTURE_2D, buddha_normal_tex);
+  GLuint buddha_edgedetect_tex;
+  glGenTextures(1, &buddha_edgedetect_tex);
+  glBindTexture(GL_TEXTURE_2D, buddha_edgedetect_tex);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE , nullptr);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -399,13 +400,34 @@ int main(void) {
   }
   glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB],0);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, buddha_normal_tex, 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, buddha_edgedetect_tex, 0);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB + 1],0);
   std::vector<GLenum> draw_buffers = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
   glDrawBuffers(draw_buffers.size(), draw_buffers.data());
   if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
     glog << "[ERROR] Buddha framebuffer incomplete" << std::endl;
   }
+  Rend::Texture test_depth_tex{GL_DEPTH_COMPONENT};
+  Rend::Texture test_color_tex;
+  Rend::Texture test_color_tex2;
+  Rend::FBTexture test_depth_fbtex;
+  test_depth_fbtex.attachment_slot = 0;
+  test_depth_fbtex.tex = test_depth_tex;
+  test_depth_fbtex.type = Rend::FBTextureType::DEPTH_ATTACHMENT;
+  Rend::FBTexture test_color_fbtex;
+  test_color_fbtex.attachment_slot = 0;
+  test_color_fbtex.tex = test_color_tex;
+  test_color_fbtex.type = Rend::FBTextureType::COLOR_ATTACHMENT;
+  Rend::FBTexture test_color_fbtex2;
+  test_color_fbtex2.attachment_slot = 1;
+  test_color_fbtex2.tex = test_color_tex;
+  test_color_fbtex2.type = Rend::FBTextureType::COLOR_ATTACHMENT;
+
+  Rend::FrameBuffer test_fb{"Test FrameBuffer"};
+  test_fb.textures.push_back(test_color_fbtex);
+  test_fb.textures.push_back(test_color_fbtex2);
+  test_fb.textures.push_back(test_depth_fbtex);
+  test_fb.attach_attachments();
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   GLuint quad_vao;
   GLuint quad_vbo;
@@ -705,7 +727,7 @@ int main(void) {
     skybox_prog.use_program();
     glDrawArrays(GL_TRIANGLES, 0, skyboxVertices.size() / 3);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
+    //glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
     //glBindBufferBase(GL_UNIFORM_BUFFER, 5, buddha_ubo);
     buddha_ubo.bind(5);
     glBindVertexArray(buddha.vao);
@@ -734,7 +756,7 @@ int main(void) {
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB + 1]);
     glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D, buddha_normal_tex);
+    glBindTexture(GL_TEXTURE_2D, buddha_edgedetect_tex);
     glBindVertexArray(quad_vao);
     quad_prog.use_program();
     glDrawArrays(GL_TRIANGLES, 0, quad.size()/4);
