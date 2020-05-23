@@ -1,0 +1,284 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <optional>
+#include <functional>
+
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+#undef TINYOBJLOADER_IMPLEMENTATION
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#define IMGUI_IMPL_OPENGL_LOADER_GLAD
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
+
+#include <common.hpp>
+#include <logger.hpp>
+#include <shader.hpp>
+#include <texture.hpp>
+#include <uniformbuffer.hpp>
+#include <mesh.hpp>
+#include <meshinstance.hpp>
+#include <primitivegen.hpp>
+#include <camera.hpp>
+
+
+const engine_globals eGlobals = {
+				 1280, 720
+};
+
+GLFWwindow* win = nullptr;
+std::fstream glog("g.log", glog.out | glog.trunc | glog.ate);
+std::fstream flog("f.log", flog.out | flog.trunc | flog.ate);
+
+std::vector<float> quad{
+			//Pos, UV
+			-1.0f, -1.0f, 0.0f, 0.0f,
+			1.0f, -1.0f, 1.0f, 0.0f,
+			1.0f, 1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f, 1.0f,
+			-1.0f, 1.0f, 0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f,
+};
+
+std::vector<float> skyboxVertices = {
+    // positions          
+    -1.0f,  1.0f, -1.0f,
+    -1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+    -1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+
+    -1.0f, -1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+
+    -1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+    -1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f
+};
+
+std::string to_string(const glm::vec3& a) {
+  return std::string("<") + std::to_string(a.x) + "," + std::to_string(a.y) + "," + std::to_string(a.z) + ">"; 
+}
+
+std::string to_string(const glm::vec4& a) {
+  return std::string("<") + std::to_string(a.x) + "," + std::to_string(a.y) + "," + std::to_string(a.z) +
+    "," + std::to_string(a.w) + ">"; 
+}
+
+
+logger::logger mlog(std::cout);
+
+
+typedef void  (APIENTRY *DEBUGCALLBACK)(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
+
+
+void  APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+			     GLsizei length, const GLchar* message, const void* userParam)
+{
+  //mlog << std::make_pair<logger::pri, std::string>( logger::pri::DEB, std::string("<From OpenGL> ") + message );
+  glog << std::string("<From OpenGL> ") + message << std::endl;
+
+}
+
+
+int main(void) {
+  glog.rdbuf()->pubsetbuf(0, 0);
+  flog.rdbuf()->pubsetbuf(0, 0);
+  flog << "Starting Renderer" << std::endl;
+  stbi_set_flip_vertically_on_load(true);
+  glfwInit();
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+  win = glfwCreateWindow(eGlobals.width, eGlobals.height, "OGL", nullptr, nullptr);
+  if(!win) {
+    err("Unable to open windoow");
+  }
+  glfwMakeContextCurrent(win);
+  log("Opened Window");
+  log("Loading GLAD");
+  if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    err("Unable to load GLAD");
+    std::exit(-1);
+  }
+  log("Initialized Glad");
+  glDebugMessageCallback(debugCallback, nullptr);
+  glEnable(GL_DEBUG_OUTPUT);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_CULL_FACE);
+  glViewport(0, 0, eGlobals.width, eGlobals.height);
+
+  Rend::DebugCamera mainDCamera;
+  mainDCamera.ubo.buffer.position = glm::vec4{0.0f, 10.0f, 0.0f, 0.0f};
+  mainDCamera.tick();
+  
+  Rend::Shader sponza_v{"shaders/sponza_v.spv", GL_VERTEX_SHADER};
+  Rend::Shader sponza_f{"shaders/sponza_f.spv", GL_FRAGMENT_SHADER};
+  Rend::ShaderProgram sponza_prog( { sponza_v, sponza_f } );
+  auto fn_mat = [](basic_mat &m, tinyobj::material_t &m_t) -> void {
+    bool ambient_exists = !m_t.ambient_texname.empty();
+    bool diffuse_exists = !m_t.diffuse_texname.empty();
+    bool specular_exists = !m_t.specular_texname.empty();
+    float ambient_existsf = ambient_exists ? 1.0f : 0.0f;
+    float diffuse_existsf = diffuse_exists ? 1.0f : 0.0f;
+    float specular_existsf = specular_exists ? 1.0f : 0.0f;
+    m.mat_ubo.ambient_c = {m_t.ambient[0], m_t.ambient[1], m_t.ambient[2],
+			   ambient_existsf};
+    m.mat_ubo.diffuse_c = {m_t.diffuse[0], m_t.diffuse[1], m_t.diffuse[2],
+			   diffuse_existsf};
+    m.mat_ubo.specular_c = {m_t.specular[0], m_t.specular[1], m_t.specular[2],
+			    specular_existsf};
+    glGenBuffers(1, &m.ubo);
+    glBindBuffer(GL_UNIFORM_BUFFER, m.ubo);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(m.mat_ubo), &m.mat_ubo,
+		 GL_STREAM_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    if (ambient_exists) {
+      std::string tex_name = m_t.ambient_texname;
+      std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
+      m.ambient_t = std::make_optional(
+	  Rend::Texture("assets/sponza/" + tex_name, GL_RGBA));
+    } else {
+      m.ambient_t = std::nullopt;
+    }
+    if (diffuse_exists) {
+      std::string tex_name = m_t.diffuse_texname;
+      std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
+      m.diffuse_t = std::make_optional(
+	  Rend::Texture("assets/sponza/" + tex_name, GL_RGBA));
+    } else {
+      m.diffuse_t = std::nullopt;
+    }
+
+    if (specular_exists) {
+      std::string tex_name = m_t.specular_texname;
+      std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
+      m.specular_t = std::make_optional(
+          Rend::Texture("assets/sponza/" + tex_name, GL_RGBA));
+    } else {
+      m.specular_t = std::nullopt;
+    }
+  };
+
+  Rend::Mesh<basic_mat, void (*)(basic_mat&, tinyobj::material_t&)>
+    sponza_mesh("assets/sponza/sponza.obj", "assets/sponza", fn_mat);
+  Rend::MeshInstance sponza_inst(&sponza_mesh);
+
+  Rend::UniformBuffer<debug_ubo> debugParams;
+  debugParams.buffer.adsn = glm::vec4{0.3f, 1.0f, 1.0f, 0.0f};
+  debugParams.upload();
+  debugParams.bind(3);
+
+  Rend::UniformBuffer<point_light> plight;
+  plight.buffer.color = glm::vec4(1.0f);
+  plight.buffer.falloff_constants = glm::vec4{0.0f, 0.001f, 0.0f, 0.0f};
+  plight.buffer.position_intensity = glm::vec4({0.0f, 5.0f, 0.0f, 3.0f});
+  plight.upload();
+  plight.bind(0);
+
+  Rend::UniformBuffer<directional_light> dlight;
+  dlight.buffer.color = glm::vec4{1.0f};
+  dlight.buffer.direction_intensity = glm::vec4{1.0f, -1.0f, 0.0f, 1.0f};
+  dlight.upload();
+  dlight.bind(4);
+  float horizontal_angle = 0.0f;
+  float vertical_angle = 0.0f;
+  float time = 0;
+  float dt = 0;
+  while(!glfwWindowShouldClose(win)) {
+    if(glfwGetKey(win, GLFW_KEY_E) == GLFW_PRESS) {
+      mainDCamera.ubo.buffer.position -= glm::vec4{0, 200.0f, 0.0f, 0.0f} * dt;
+    }
+    if(glfwGetKey(win, GLFW_KEY_Q) == GLFW_PRESS) {
+      mainDCamera.ubo.buffer.position += glm::vec4{0, 200.0f, 0.0f, 0.0f} * dt;
+    }
+    if(glfwGetKey(win, GLFW_KEY_I) == GLFW_PRESS) {
+      horizontal_angle -= dt * 200;
+    }
+    if(glfwGetKey(win, GLFW_KEY_P) == GLFW_PRESS) {
+      horizontal_angle -= dt * 200;
+    }
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    mainDCamera.tick();
+    mainDCamera.ubo.bind(2);
+    auto viewM = mainDCamera.getViewM();
+    auto perspM = mainDCamera.getPerspectiveM();
+    sponza_inst.tick(perspM, viewM);
+    sponza_inst.ubo.bind(5);
+    sponza_prog.use_program();
+    glBindVertexArray(sponza_mesh.vao);
+    for(auto& [mat_i, i, len] : sponza_mesh.mat_tuples) {
+      if(sponza_mesh.mats[mat_i].ambient_t.has_value())
+	sponza_mesh.mats[mat_i].ambient_t.value().bind(0);
+      else {
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+      }
+
+      if(sponza_mesh.mats[mat_i].diffuse_t.has_value())
+	sponza_mesh.mats[mat_i].diffuse_t.value().bind(1);
+      else {
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+      }
+      if(sponza_mesh.mats[mat_i].specular_t.has_value())
+	sponza_mesh.mats[mat_i].specular_t.value().bind(2);
+      else {
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, 0);
+      }
+      glBindBufferBase(GL_UNIFORM_BUFFER, 1, sponza_mesh.mats[mat_i].ubo);
+      glDrawArrays(GL_TRIANGLES, 3*i, len*3);
+    }
+    glfwSwapBuffers(win);
+    glfwPollEvents();
+    dt = glfwGetTime() - time;
+    time += dt;
+  }
+}

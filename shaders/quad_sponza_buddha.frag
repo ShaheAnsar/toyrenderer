@@ -14,7 +14,7 @@ layout(binding = 4) uniform sampler2D buddha_normal;
 
 //const float offset = 1.0/1600;
 const int offset = 1;
-const float threshold = 0.0000005f;
+const float threshold = 1.0f;
 
 
 vec4 compute_edge() {
@@ -40,15 +40,15 @@ vec4 compute_edge() {
 			 {-1, -2, -1}
   };
 
-  float g_x = 0;
-  float g_y = 0;
+  vec3 g_x = vec3(0.0f);
+  vec3 g_y = vec3(0.0f);
   for(int j = 0; j < 3; j++) {
     for(int i = 0; i < 3; i++) {
-      g_x += sobel_x[j][i] * texelFetch(buddha_depth, uv_raw + offsets[j][i], 0).r;
-      g_y += sobel_y[j][i] * texelFetch(buddha_depth, uv_raw + offsets[j][i], 0).r;
+      g_x += sobel_x[j][i] * texelFetch(buddha_normal, uv_raw + offsets[j][i], 0).rgb;
+      g_y += sobel_y[j][i] * texelFetch(buddha_normal, uv_raw + offsets[j][i], 0).rgb;
     }
   }
-  float g2 = pow(g_x,2) + pow(g_y, 2);
+  float g2 = dot(g_x,g_x) + dot(g_y, g_y);
   float e = max(g2, threshold);
   if(e == threshold) e = 0.0f;
   else e = 1.0f;
@@ -75,7 +75,7 @@ void main() {
     front_col += vec4(vec3(0.0f), 1.0f);
   }
   else {
-    front_col = texture(buddha_normal, uv);
+    front_col = vec4( texture(buddha_color, uv).rgb , 1.0f);
   }
   col = compute_edge() * front_col;
   //col = 1000 * texture(buddha_normal, uv);

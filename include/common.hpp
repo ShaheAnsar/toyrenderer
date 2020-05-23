@@ -1,6 +1,8 @@
 #pragma once
 
 #include <optional>
+#include <iostream>
+#include <fstream>
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -8,6 +10,8 @@
 #include <glad/glad.h>
 
 #include <texture.hpp>
+
+extern std::fstream flog;
 
 struct engine_gl_ubo {
   float time;
@@ -53,5 +57,28 @@ struct basic_mat {
   std::optional<Rend::Texture> diffuse_t;
   std::optional<Rend::Texture> specular_t;
 };
+
+extern void log_recurse();
+
+template<typename T, typename... Args>
+static void log_recurse(T f, Args ... args) {
+  flog << f;
+  log_recurse(args ...);
+}
+
+template<typename T, typename... Args>
+void err(T f, Args ... args) {
+  flog << "[ERROR] ";
+  log_recurse(f, args ...);
+}
+
+template<typename T, typename... Args>
+void log(T f, Args ... args) {
+  flog << "[DEBUG] ";
+  log_recurse(f, args ...);
+}
+
+
+
 
 extern const engine_globals eGlobals;
