@@ -78,6 +78,7 @@ void main() {
     front_col = vec4( texture(buddha_color, uv).rgb , 1.0f);
   }
   col = compute_edge() * front_col;
+  //col = texture(buddha_color, uv);
   //col = 1000 * texture(buddha_normal, uv);
     //col *= vec4(vec3(sin(uv.t * 3.14) * sin(uv.s * 3.14)), 1.0f);
 

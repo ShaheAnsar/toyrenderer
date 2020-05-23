@@ -99,9 +99,13 @@ void FrameBuffer::attach_attachments() {
   }
   glDrawBuffers(tex_ids.size(),
 		tex_ids.data());
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void FrameBuffer::bind() {
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+}
+
+bool FrameBuffer::is_complete() {
+  bind();
+  return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 }

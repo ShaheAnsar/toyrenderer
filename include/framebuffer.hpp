@@ -31,6 +31,7 @@ namespace Rend{
     FrameBuffer& operator=(const FrameBuffer&);
     void attach_attachments();
     void bind();
+    bool is_complete();
     ~FrameBuffer();
   };
 };
