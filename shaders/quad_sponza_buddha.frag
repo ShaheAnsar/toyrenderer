@@ -10,6 +10,7 @@ layout(binding = 0) uniform sampler2D sponza_color;
 layout(binding = 1) uniform sampler2D sponza_depth;
 layout(binding = 2) uniform sampler2D buddha_color;
 layout(binding = 3) uniform sampler2D buddha_depth;
+layout(binding = 4) uniform sampler2D buddha_normal;
 
 //const float offset = 1.0/1600;
 const int offset = 1;
@@ -74,9 +75,10 @@ void main() {
     front_col += vec4(vec3(0.0f), 1.0f);
   }
   else {
-    front_col = texture(buddha_color, uv);
+    front_col = texture(buddha_normal, uv);
   }
   col = compute_edge() * front_col;
+  //col = 1000 * texture(buddha_normal, uv);
     //col *= vec4(vec3(sin(uv.t * 3.14) * sin(uv.s * 3.14)), 1.0f);
 
 // Manga filter.

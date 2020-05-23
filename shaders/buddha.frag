@@ -4,6 +4,7 @@ layout(location = 3) in vec3 pos;
 layout(location = 4) in vec3 normal;
 
 layout(location = 0) out vec4 color;
+layout(location = 1) out vec4 onormal;
 
 
 layout(std140, binding = 0) uniform plight{
@@ -54,7 +55,7 @@ vec4 calc_diffuse(){
 
   float t = min(1.0f, 1.0f/pfalloff) * clamp(dot(normal, normalize( pos_int.xyz - pos )), 0.0f, 1.0f);
   t += clamp(dlight_direction.w * dot(normal, normalize( -dlight_direction.xyz)), 0.0f, 1.0f);
-  //return vec4(vec3(t), 1.0f);
+  return vec4(vec3(t), 1.0f);
   return vec4( texture(cel_shade, vec2(0.0f, t)).rgb, 1.0f ) * _color;
 
 }
@@ -66,12 +67,15 @@ vec4 calc_specular(){
   float t = min(1.0f, 1.0f/pfalloff) * clamp(dot(normalize( reflect(pos - pos_int.xyz, normal) ),
 		      normalize( camera.position.xyz - pos)), 0.0f, 1.0f);
   t = pow(t, 32);
-  //return vec4(vec3(t), 1.0f);
+  return vec4(vec3(t), 1.0f);
   //return vec4( texture(cel_shade, vec2(0, t)).rgb, 1.0f );
-  return vec4(vec3( step(0.2f, t) ), 1.0f);
+  //return vec4(vec3( step(0.2f, t) ), 1.0f);
 }
 
 
 void main() {
   color = adsn.x * calc_ambient() + adsn.y*calc_diffuse() + adsn.z*calc_specular();
+  color = vec4(normal, 1.0f);
+  //onormal = color.rgb;
+  onormal = vec4(1.0f);
 }
