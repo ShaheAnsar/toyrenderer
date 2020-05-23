@@ -107,5 +107,6 @@ void Texture::bind(GLuint slot) {
 }
 
 void Texture::set_param(GLuint parameter, GLuint option) {
+  glBindTexture(GL_TEXTURE_2D, tex_id);
   glTexParameteri(GL_TEXTURE_2D, parameter, option);
 }
