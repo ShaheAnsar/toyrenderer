@@ -9,6 +9,18 @@ extern std::fstream glog;
 using namespace Rend;
 
 
+FBTexture::FBTexture(const Rend::Texture& t, FBTextureType type,
+		     GLuint attachment_slot) :
+  tex(t), type(type), attachment_slot(attachment_slot)
+{
+  tex.bind(0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+
 
 FrameBuffer::FrameBuffer(const std::vector<FBTexture>& textures) :
   textures(textures), name("nil"), refc(nullptr)

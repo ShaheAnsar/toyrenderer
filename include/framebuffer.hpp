@@ -18,6 +18,8 @@ namespace Rend{
     FBTextureType type;
     Rend::Texture tex;
     GLuint attachment_slot; // Only used for color attachments
+    FBTexture(const Rend::Texture& t, FBTextureType type = FBTextureType::COLOR_ATTACHMENT,
+	      GLuint attachment_slot = 0);
   };
   struct FrameBuffer{
     std::string name; // Name for internal use purposes

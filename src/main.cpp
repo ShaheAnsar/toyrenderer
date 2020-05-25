@@ -407,19 +407,19 @@ int main(void) {
   if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
     glog << "[ERROR] Buddha framebuffer incomplete" << std::endl;
   }
-  Rend::Texture test_depth_tex{GL_DEPTH_COMPONENT};
-  test_depth_tex.set_param(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  test_depth_tex.set_param(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  Rend::Texture buddha_depth_tex{GL_DEPTH_COMPONENT};
+  buddha_depth_tex.set_param(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  buddha_depth_tex.set_param(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   //test_depth_tex.set_param(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   //test_depth_tex.set_param(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  Rend::Texture test_color_tex;
-  test_color_tex.set_param(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  test_color_tex.set_param(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  Rend::Texture buddha_color_tex;
+  buddha_color_tex.set_param(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  buddha_color_tex.set_param(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   //test_color_tex.set_param(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   //test_color_tex.set_param(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  Rend::Texture test_color_tex2;
-  test_color_tex2.set_param(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  test_color_tex2.set_param(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  Rend::Texture buddha_color_tex2;
+  buddha_color_tex2.set_param(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  buddha_color_tex2.set_param(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   //test_color_tex2.set_param(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   //test_color_tex2.set_param(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   //GLuint fbo;
@@ -429,34 +429,34 @@ int main(void) {
   //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, test_color_tex2.tex_id, 0);
   //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, test_depth_tex.tex_id, 0);
   //glDrawBuffers(draw_buffers.size(), draw_buffers.data());
-  if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-    err("Test FB not complete");
-  }
-  Rend::FBTexture test_depth_fbtex;
-  test_depth_fbtex.attachment_slot = 0;
-  test_depth_fbtex.tex = test_depth_tex;
-  test_depth_fbtex.type = Rend::FBTextureType::DEPTH_ATTACHMENT;
-  Rend::FBTexture test_color_fbtex;
-  test_color_fbtex.attachment_slot = 0;
-  test_color_fbtex.tex = test_color_tex;
-  test_color_fbtex.type = Rend::FBTextureType::COLOR_ATTACHMENT;
-  Rend::FBTexture test_color_fbtex2;
-  test_color_fbtex2.attachment_slot = 1;
-  test_color_fbtex2.tex = test_color_tex2;
-  test_color_fbtex2.type = Rend::FBTextureType::COLOR_ATTACHMENT;
+  //if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+  //  err("Test FB not complete");
+  //}
+  Rend::FBTexture buddha_depth_fbtex(buddha_depth_tex, Rend::FBTextureType::DEPTH_ATTACHMENT);
+  //test_depth_fbtex.attachment_slot = 0;
+  //test_depth_fbtex.tex = test_depth_tex;
+  //test_depth_fbtex.type = Rend::FBTextureType::DEPTH_ATTACHMENT;
+  Rend::FBTexture buddha_color_fbtex(buddha_color_tex);
+  //test_color_fbtex.attachment_slot = 0;
+  //test_color_fbtex.tex = test_color_tex;
+  //test_color_fbtex.type = Rend::FBTextureType::COLOR_ATTACHMENT;
+  Rend::FBTexture buddha_color_fbtex2(buddha_color_tex2, Rend::FBTextureType::COLOR_ATTACHMENT, 1);
+  //test_color_fbtex2.attachment_slot = 1;
+  //test_color_fbtex2.tex = test_color_tex2;
+  //test_color_fbtex2.type = Rend::FBTextureType::COLOR_ATTACHMENT;
 
-  Rend::FrameBuffer test_fb{"Test FrameBuffer"};
-  glBindFramebuffer(GL_FRAMEBUFFER, test_fb.fbo);
+  Rend::FrameBuffer buddha_fb{"Test FrameBuffer"};
+  glBindFramebuffer(GL_FRAMEBUFFER, buddha_fb.fbo);
   //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, test_color_fbtex.tex.tex_id,0);
   //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, test_color_fbtex2.tex.tex_id,0);
   //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, test_depth_fbtex.tex.tex_id,0);
-  test_fb.textures.push_back(test_color_fbtex);
-  test_fb.textures.push_back(test_color_fbtex2);
-  test_fb.textures.push_back(test_depth_fbtex);
-  test_fb.attach_attachments();
+  buddha_fb.textures.push_back(buddha_color_fbtex);
+  buddha_fb.textures.push_back(buddha_color_fbtex2);
+  buddha_fb.textures.push_back(buddha_depth_fbtex);
+  buddha_fb.attach_attachments();
   //test_fb.bind();
   //glDrawBuffers(draw_buffers.size(), draw_buffers.data());
-  if(!test_fb.is_complete()) {
+  if(!buddha_fb.is_complete()) {
     err("Test FB not complete");
   }
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -734,7 +734,7 @@ int main(void) {
     glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    test_fb.bind();
+    buddha_fb.bind();
     //glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -763,7 +763,7 @@ int main(void) {
 
     //glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
     //glBindBufferBase(GL_UNIFORM_BUFFER, 5, buddha_ubo);
-    test_fb.bind();
+    buddha_fb.bind();
     //glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     buddha_ubo.bind(5);
     glBindVertexArray(buddha.vao);
@@ -793,9 +793,9 @@ int main(void) {
     //glBindTexture(GL_TEXTURE_2D, test_depth_tex.tex_id);
     //glActiveTexture(GL_TEXTURE4);
     //glBindTexture(GL_TEXTURE_2D, test_color_tex2.tex_id);
-    test_color_tex.bind(2);
-    test_depth_tex.bind(3);
-    test_color_tex2.bind(4);
+    buddha_color_tex.bind(2);
+    buddha_depth_tex.bind(3);
+    buddha_color_tex2.bind(4);
     //glActiveTexture(GL_TEXTURE2);
     //glBindTexture(GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB]);
     //glActiveTexture(GL_TEXTURE3);
