@@ -162,7 +162,7 @@ int main(void) {
     std::cerr << "Unable to initialize window";
     std::exit(-1);
   }
-  glfwSwapInterval(1);
+  //glfwSwapInterval(1);
   glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   if(!glfwRawMouseMotionSupported())
     mlog << std::make_pair<logger::pri, std::string>(logger::pri::ERR,
@@ -346,116 +346,31 @@ int main(void) {
   glBindVertexArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   
-  #define SPONZA_FB 0
-  #define BUDDHA_FB 1
-  GLuint fbs[2];
-  glGenFramebuffers(2, fbs);
-  flog << "Framebuffers: " << fbs[0] << ", " << fbs[1] << std::endl;
-  glBindFramebuffer(GL_FRAMEBUFFER,fbs[SPONZA_FB]);
-  GLuint fb_texs[4];
-  glGenTextures(4, fb_texs);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, fb_texs[2*SPONZA_FB]);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-  glBindTexture(GL_TEXTURE_2D, fb_texs[2*SPONZA_FB + 1]);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, WIDTH, HEIGHT, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-  glBindTexture(GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB]);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-  glBindTexture(GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB + 1]);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, WIDTH, HEIGHT, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-  GLuint buddha_edgedetect_tex;
-  glGenTextures(1, &buddha_edgedetect_tex);
-  glBindTexture(GL_TEXTURE_2D, buddha_edgedetect_tex);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE , nullptr);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glBindTexture(GL_TEXTURE_2D, 0);
-
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fb_texs[2*SPONZA_FB],0);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, fb_texs[2*SPONZA_FB + 1],0);
-  if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-    glog << "[ERROR] Sponza framebuffer incomplete" << std::endl;
-  }
-  glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB],0);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, buddha_edgedetect_tex, 0);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB + 1],0);
-  std::vector<GLenum> draw_buffers = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
-  glDrawBuffers(draw_buffers.size(), draw_buffers.data());
-  if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-    glog << "[ERROR] Buddha framebuffer incomplete" << std::endl;
+  Rend::FrameBuffer sponza_fb{
+			      "Sponza Framebuffer",
+			      {
+			       Rend::FBTexture{Rend::Texture{}},
+			       Rend::FBTexture{Rend::Texture{GL_DEPTH_COMPONENT}, Rend::FBTextureType::DEPTH_ATTACHMENT}
+			      }
+  };
+  Rend::Texture& sponza_colorT = sponza_fb.textures[0].tex;
+  Rend::Texture& sponza_depthT = sponza_fb.textures[1].tex;
+  sponza_fb.attach_attachments();
+  if(!sponza_fb.is_complete()) {
+    err("Sponza Framebuffer not complete");
   }
   Rend::Texture buddha_depth_tex{GL_DEPTH_COMPONENT};
-  buddha_depth_tex.set_param(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  buddha_depth_tex.set_param(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  //test_depth_tex.set_param(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  //test_depth_tex.set_param(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   Rend::Texture buddha_color_tex;
-  buddha_color_tex.set_param(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  buddha_color_tex.set_param(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  //test_color_tex.set_param(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  //test_color_tex.set_param(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   Rend::Texture buddha_color_tex2;
-  buddha_color_tex2.set_param(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  buddha_color_tex2.set_param(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  //test_color_tex2.set_param(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  //test_color_tex2.set_param(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  //GLuint fbo;
-  //glGenFramebuffers(1, &fbo);
-  //glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-  //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, test_color_tex.tex_id, 0);
-  //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, test_color_tex2.tex_id, 0);
-  //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, test_depth_tex.tex_id, 0);
-  //glDrawBuffers(draw_buffers.size(), draw_buffers.data());
-  //if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-  //  err("Test FB not complete");
-  //}
   Rend::FBTexture buddha_depth_fbtex(buddha_depth_tex, Rend::FBTextureType::DEPTH_ATTACHMENT);
-  //test_depth_fbtex.attachment_slot = 0;
-  //test_depth_fbtex.tex = test_depth_tex;
-  //test_depth_fbtex.type = Rend::FBTextureType::DEPTH_ATTACHMENT;
   Rend::FBTexture buddha_color_fbtex(buddha_color_tex);
-  //test_color_fbtex.attachment_slot = 0;
-  //test_color_fbtex.tex = test_color_tex;
-  //test_color_fbtex.type = Rend::FBTextureType::COLOR_ATTACHMENT;
   Rend::FBTexture buddha_color_fbtex2(buddha_color_tex2, Rend::FBTextureType::COLOR_ATTACHMENT, 1);
-  //test_color_fbtex2.attachment_slot = 1;
-  //test_color_fbtex2.tex = test_color_tex2;
-  //test_color_fbtex2.type = Rend::FBTextureType::COLOR_ATTACHMENT;
-
   Rend::FrameBuffer buddha_fb{"Test FrameBuffer"};
   glBindFramebuffer(GL_FRAMEBUFFER, buddha_fb.fbo);
-  //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, test_color_fbtex.tex.tex_id,0);
-  //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, test_color_fbtex2.tex.tex_id,0);
-  //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, test_depth_fbtex.tex.tex_id,0);
   buddha_fb.textures.push_back(buddha_color_fbtex);
   buddha_fb.textures.push_back(buddha_color_fbtex2);
   buddha_fb.textures.push_back(buddha_depth_fbtex);
   buddha_fb.attach_attachments();
-  //test_fb.bind();
-  //glDrawBuffers(draw_buffers.size(), draw_buffers.data());
   if(!buddha_fb.is_complete()) {
     err("Test FB not complete");
   }
@@ -576,7 +491,6 @@ int main(void) {
   float mouse_speed = 0.5f;
   float horizontal_angle = 0.f;
   float vertical_angle = 0.f;
-  float camera_fov = 60.0f;
   bool init = true;
   bool raw_motion_disabled = false;
   float movement_speed = 200.0f;
@@ -729,17 +643,15 @@ int main(void) {
     sponza_inst.tick(perspectiveM, viewM);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    glBindFramebuffer(GL_FRAMEBUFFER, fbs[SPONZA_FB]);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    //glBindFramebuffer(GL_FRAMEBUFFER, fbs[SPONZA_FB]);
+    sponza_fb.bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     buddha_fb.bind();
-    //glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, fbs[SPONZA_FB]);
+    //glBindFramebuffer(GL_FRAMEBUFFER, fbs[SPONZA_FB]);
+    sponza_fb.bind();
     sponza_prog.use_program();
     sponza_inst.ubo.bind(5);
     glBindVertexArray(sponza_test.vao);
@@ -783,10 +695,12 @@ int main(void) {
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, fb_texs[2*SPONZA_FB]);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, fb_texs[2*SPONZA_FB + 1]);
+    sponza_colorT.bind(0);
+    sponza_depthT.bind(1);
+    //glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(GL_TEXTURE_2D, fb_texs[2*SPONZA_FB]);
+    //glActiveTexture(GL_TEXTURE1);
+    //glBindTexture(GL_TEXTURE_2D, fb_texs[2*SPONZA_FB + 1]);
     //glActiveTexture(GL_TEXTURE2);
     //glBindTexture(GL_TEXTURE_2D, test_color_tex.tex_id);
     //glActiveTexture(GL_TEXTURE3);
