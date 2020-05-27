@@ -1,0 +1,79 @@
+{
+  "ConfigType": "RenderPassPipelineConfig",
+  "Name": "CelShadingPipeline",
+  "RenderPasses": [
+    {
+      "ConfigType" : "RenderPassConfig",
+      "Name" : "Normal",
+      "Attachments": [
+        {
+          "AttachmentName": "Color",
+          "AttachmentType": "ColorAttachment",
+          "AttachmentSlot": 0
+        },
+        {
+          "AttachmentName": "Depth",
+          "AttachmentType": "DepthAttachment"
+        }
+      ]
+    },
+    {
+      "ConfigType" : "RenderPassConfig",
+      "Name" : "CelShadePass",
+      "Attachments" : [
+        {
+          "AttachmentName": "Color",
+          "AttachmentType": "ColorAttachment",
+          "AttachmentSlot": 0
+        },
+        {
+          "AttachmentName": "EdgeDetect",
+          "AttachmentType": "ColorAttachment",
+          "AttachmentSlot": 1
+        },
+        {
+          "AttachmentName": "Depth",
+          "AttachmentType": "DepthAttachment"
+        }
+      ]
+    },
+    {
+      "ConfigType" : "RenderPassConfig",
+      "Name" : "CombinePass",
+      "Attachments" : [
+        {
+          "AttachmentName": "Color",
+          "AttachmentType": "ColorAttachment",
+          "AttachmentSlot": 0
+        },
+        {
+          "AttachmentName": "Depth",
+          "AttachmentType": "DepthAttachment"
+        }
+      ],
+      "InputTextures": [
+        {
+          "TextureName": "Normal.Color",
+          "BindingSlot": 0
+        },
+        {
+          "TextureName": "Normal.Depth",
+          "BindingSlot": 1
+        },
+        {
+          "TextureName": "CelShadePass.Color",
+          "BindingSlot": 2
+        },
+        {
+          "TextureName": "CelShadePass.EdgeDetect",
+          "BindingSlot": 4
+        },
+        {
+          "TextureName": "CelShadePass.Depth",
+          "BindingSlot": 3
+        }
+      ],
+      "UseDefaultFramebuffer": true
+    }
+  ]
+}

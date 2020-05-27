@@ -1,0 +1,26 @@
+[
+  {
+    "ConfigType": "ShaderProgramConfig",
+    "ShaderProgramName": "TestNamespace.SponzaProgram",
+    "Shaders": [
+      {
+        "ShaderType": "VertexShader",
+        "ShaderName": "VertexShaderName",
+        "ShaderLocation": "<BASE>/shaders/sponza.vert",
+        "ShaderBinLocation": "<BASE>/shaders/sponza_v.spv"
+      },
+      {
+        "ShaderType": "GeometryShader",
+        "ShaderName": "GeometryShaderName",
+        "ShaderLocation": "<BASE>/shaders/sponza.geom",
+        "ShaderBinLocation": "<BASE>/shaders/sponza_g.spv"
+      },
+      {
+        "ShaderType": "FragmentShader",
+        "ShaderName": "FragmentShaderName",
+        "ShaderLocation": "<BASE>/shaders/sponza.frag",
+        "ShaderBinLocation": "<BASE>/shaders/sponza_f.spv"
+      }
+    ]
+  }
+]

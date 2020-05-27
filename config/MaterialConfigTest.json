@@ -1,0 +1,14 @@
+[
+  {
+  "ConfigType" : "MaterialConfig",
+  "MaterialName": "BasicMaterial",
+  "ShaderProgram" : "TestNamespace.SponzaProgram"
+  },
+  {
+    "ConfigType" : "MaterialConfig",
+    "UseCustomShaderProgram": true,
+    "Shaders": [
+      ...
+    ]
+  }
+]

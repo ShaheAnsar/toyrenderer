@@ -30,6 +30,7 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <json.hpp>
 
 
 
@@ -206,7 +207,7 @@ int main(void) {
   Rend::Shader shader3df("shaders/3d_basic_f.spv", GL_FRAGMENT_SHADER);
   Rend::ShaderProgram program3d({shader3dv, shader3df});
   program3d.use_program();
-  glUniform1i(1, 0);
+  //glUniform1i(1, 0);
   Rend::Texture t("./assets/woodfloor.png");
   t.bind(3);
   program3d.use_program();
@@ -214,16 +215,6 @@ int main(void) {
   Rend::UniformBuffer<engine_gl_ubo> engineGlUBO;
   engineGlUBO.buffer.time = 0;
   engineGlUBO.buffer.dt = 0;
-  uniform_buffer_3d sponza_ubo_data = {
-				       glm::perspective(glm::radians(45.0f), 16.0f/9.0f, 0.1f,
-							10000.0f)*
-				       glm::lookAt(glm::vec3{1000.0f, 1000.0f, 1000.0f},
-						   glm::vec3{0.0f, 0.0f, 0.0f},
-						   glm::vec3{0.0f, 1.0f, 0.0f}),
-				       glm::mat4(1.0f),
-				       glm::mat4(1.0f),
-				       glm::vec4(0.0f)
-  };
   point_light sponza_light = {
 			      glm::vec4{0.0f, 20.0f, 0.0f, 10000.0f},
 			      glm::vec4{1.0f, 1.0f, 1.0f, 1.0f},
@@ -235,19 +226,14 @@ int main(void) {
   Rend::ShaderProgram sponza_prog({sponza_v, sponza_f});
   sponza_prog.use_program();
 
-  GLuint sponza_ubo;
   GLuint sponza_light_ubo;
-  glGenBuffers(1, &sponza_ubo);
   glGenBuffers(1, &sponza_light_ubo);
-  glBindBuffer(GL_UNIFORM_BUFFER, sponza_ubo);
-  glBufferData(GL_UNIFORM_BUFFER, sizeof(uniform_buffer_3d), &sponza_ubo_data, GL_STREAM_DRAW);
   glBindBuffer(GL_UNIFORM_BUFFER, sponza_light_ubo);
   glBufferData(GL_UNIFORM_BUFFER, sizeof(point_light), &sponza_light, GL_STREAM_DRAW);
   glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
   glBindBufferBase(GL_UNIFORM_BUFFER, 0, 0);
   glBindBufferBase(GL_UNIFORM_BUFFER, 0, sponza_light_ubo);
-  glBindBufferBase(GL_UNIFORM_BUFFER, 5, sponza_ubo);
   glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
   auto fn_mat = [](basic_mat& m, tinyobj::material_t& m_t) -> void {
@@ -374,6 +360,17 @@ int main(void) {
   if(!buddha_fb.is_complete()) {
     err("Test FB not complete");
   }
+  Rend::FrameBuffer postfx_fb{
+    "Postprocessing FB",
+      {
+	Rend::FBTexture{ Rend::Texture() }
+      }
+  };
+  Rend::Texture& postfx_colorT = postfx_fb.textures[0].tex;
+  postfx_fb.attach_attachments();
+  if(!postfx_fb.is_complete()) {
+    err("PostFX FB not complete");
+  }
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   GLuint quad_vao;
   GLuint quad_vbo;
@@ -447,6 +444,9 @@ int main(void) {
 		     glm::mat4(1.0f),
 		     glm::vec4(0.0f)
   };
+
+  Rend::ShaderProgram quad_prog2{ { Rend::Shader("shaders/quad_postfx_v.spv", GL_VERTEX_SHADER),
+				 Rend::Shader("shaders/quad_postfx_f.spv", GL_FRAGMENT_SHADER) } };
   
 
   ImGui::CreateContext();
@@ -529,6 +529,9 @@ int main(void) {
     }
     if(ImGui::Button("Reload Sponza Buddha FB Shader")) {
       quad_prog.reload();
+    }
+    if(ImGui::Button("Reload POSTFX shader")) {
+      quad_prog2.reload();
     }
 
     perspectiveM = mainDCamera.getPerspectiveM();
@@ -618,11 +621,6 @@ int main(void) {
     glm::mat4 viewM_skybox = glm::mat4(glm::mat3(viewM));
     skybox_ubo_data.mvp = perspectiveM * viewM_skybox;
     skybox_ubo_data.normalM = viewM_skybox;
-    glBindBuffer(GL_UNIFORM_BUFFER, sponza_ubo);
-    //glBufferData(GL_UNIFORM_BUFFER, sizeof(uniform_buffer_3d), &sponza_ubo_data, GL_STREAM_DRAW);
-    //camera_ubo_data = glm::vec4(camera_pos, 1.0f);
-    //glBindBuffer(GL_UNIFORM_BUFFER, camera_ubo);
-    //glBufferData(GL_UNIFORM_BUFFER, sizeof(camera_ubo_data), &camera_ubo_data, GL_STREAM_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, debug_ubo_name);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(debug_ubo), &debug_ubo_1, GL_STREAM_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, dlight_ubo);
@@ -694,31 +692,22 @@ int main(void) {
       glDrawArrays(GL_TRIANGLES, 3*i, len*3);
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    postfx_fb.bind();
     sponza_colorT.bind(0);
     sponza_depthT.bind(1);
-    //glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_2D, fb_texs[2*SPONZA_FB]);
-    //glActiveTexture(GL_TEXTURE1);
-    //glBindTexture(GL_TEXTURE_2D, fb_texs[2*SPONZA_FB + 1]);
-    //glActiveTexture(GL_TEXTURE2);
-    //glBindTexture(GL_TEXTURE_2D, test_color_tex.tex_id);
-    //glActiveTexture(GL_TEXTURE3);
-    //glBindTexture(GL_TEXTURE_2D, test_depth_tex.tex_id);
-    //glActiveTexture(GL_TEXTURE4);
-    //glBindTexture(GL_TEXTURE_2D, test_color_tex2.tex_id);
     buddha_color_tex.bind(2);
     buddha_depth_tex.bind(3);
     buddha_color_tex2.bind(4);
-    //glActiveTexture(GL_TEXTURE2);
-    //glBindTexture(GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB]);
-    //glActiveTexture(GL_TEXTURE3);
-    //glBindTexture(GL_TEXTURE_2D, fb_texs[2*BUDDHA_FB + 1]);
-    //glActiveTexture(GL_TEXTURE4);
-    //glBindTexture(GL_TEXTURE_2D, buddha_edgedetect_tex);
     glBindVertexArray(quad_vao);
     quad_prog.use_program();
     glDrawArrays(GL_TRIANGLES, 0, quad.size()/4);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDepthMask(GL_FALSE);
+    quad_prog2.use_program();
+    postfx_colorT.bind(0);
+    glDrawArrays(GL_TRIANGLES, 0, quad.size()/4);
+    glDepthMask(0xff);
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
