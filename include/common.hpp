@@ -48,6 +48,7 @@ struct basic_mat_ubo {
   glm::vec4 ambient_c;
   glm::vec4 diffuse_c;
   glm::vec4 specular_c;
+  glm::uvec4 bitmap; // BITMAP. Bit 0 corresponds to the existence of a normal map
 };
 
 struct basic_mat {
@@ -56,6 +57,7 @@ struct basic_mat {
   std::optional<Rend::Texture> ambient_t;
   std::optional<Rend::Texture> diffuse_t;
   std::optional<Rend::Texture> specular_t;
+  std::optional<Rend::Texture> normal_t;
 };
 
 extern void log_recurse();

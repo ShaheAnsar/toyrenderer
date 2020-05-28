@@ -21,7 +21,7 @@ layout(std140, binding = 1) uniform mat{
   vec4 ambient_c; // <R, G, B, [Texture exists? 1 if true, 0 if yes]>
   vec4 diffuse_c;
   vec4 specular_c;
-  vec4 normal_c; // If vec4(1.0f), texture exists, else it does not
+  uvec4 bitmap; // Bit 0 corespons to an existing normal map
 };
 
 layout(std140, binding = 2) uniform camera_t{
@@ -37,7 +37,7 @@ layout(std140, binding = 3) uniform debug{
 layout(binding = 0) uniform sampler2D ambient_t;
 layout(binding = 1) uniform sampler2D diffuse_t;
 layout(binding = 2) uniform sampler2D specular_t;
-layout(binding = 3) uniform sampler2D cel_shade_t;
+layout(binding = 3) uniform sampler2D normal_t;
 
 
 vec4 calc_diffuse() {
@@ -57,10 +57,10 @@ vec4 calc_diffuse() {
   float dlight_d = clamp(dlight_direction.w *
 			 dot(normal, normalize(-dlight_direction.xyz)),
 			 0.0f, 1.0f);
-  vec3 dlight_cel = (texture(cel_shade_t, vec2( 0, dlight_d ) ).xyz);
-  vec3 plight_cel = (texture(cel_shade_t, vec2( 0, plight_d ) ).xyz);
-  vec4 tlight = vec4( diffuse_c.xyz, 1.0f ) * vec4( plight_cel * pcolor.xyz +
-						dlight_cel * dlight_color.xyz, 1.0f);
+  //vec3 dlight_cel = (texture(cel_shade_t, vec2( 0, dlight_d ) ).xyz);
+  //vec3 plight_cel = (texture(cel_shade_t, vec2( 0, plight_d ) ).xyz);
+  //vec4 tlight = vec4( diffuse_c.xyz, 1.0f ) * vec4( plight_cel * pcolor.xyz +
+						//dlight_cel * dlight_color.xyz, 1.0f);
   //return tlight * adsn.y * diffuse_tex;
   return vec4(vec3( plight_d + dlight_d ), 1.0f) * adsn.y * diffuse_tex * vec4(diffuse_c.rgb, 1.0f); /* texture(diffuse_t, uv)*/;
 }
@@ -92,8 +92,13 @@ vec4 calc_specular() {
 }
 
 vec4 calc_ambient() {
+  vec4 ambient_tex;
+  if(ambient_c.a > 0.1f)
+    ambient_tex = texture(ambient_t, uv);
+  else
+    ambient_tex = vec4(1.0f);
   //return adsn.x * vec4(0.1f);
-  return vec4(vec3(0.2f), 1.0f) * texture(ambient_t, uv);
+  return vec4(vec3(0.2f), 1.0f) * ambient_tex;
   //return adsn.x * vec4(ambient_c.rgb, 1.0f)* texture(ambient_t, uv) * pcolor;
 }
 
@@ -104,4 +109,8 @@ void main() {
   vec4 spec = calc_specular();
   vec4 ambi = calc_ambient();
   color = vec4(diff.rgb + spec.rgb + ambi.rgb, diff.a * ambi.a);
+  if(( bitmap.w & 1 ) == 1) {
+    //color = texture(normal_t, uv);
+    color.a = 1.0f;
+  }
 }

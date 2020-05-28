@@ -6,6 +6,7 @@
 #include <fstream>
 
 #include <logger.hpp>
+#include <common.hpp>
 
 extern logger::logger mlog;
 extern std::fstream flog;
@@ -13,9 +14,15 @@ extern std::fstream glog;
 
 using namespace Rend;
 
-Shader::Shader(std::string fn, GLenum shader_type, const GLchar* entrypoint, std::pair<std::vector<GLuint>,
+Shader::Shader(std::string fn, GLenum shader_type,
+	       const GLchar* entrypoint, std::pair<std::vector<GLuint>,
 	       std::vector<GLuint>> specialization_constants) :
-  shader_type(shader_type), fn(fn), entrypoint(entrypoint) {
+  shader_type(shader_type), fn(fn), entrypoint(entrypoint), refc(nullptr) {
+  refc = new std::size_t;
+  if(!refc) {
+    err("Unable to allocate memory for refcount");
+  }
+  *refc = 1;
   unsigned long size = std::filesystem::file_size(std::filesystem::path(fn));
   std::fstream binary_stream(fn, std::ios_base::binary | std::ios_base::in);
   std::vector<char> binary(size);
@@ -39,35 +46,81 @@ Shader::Shader(std::string fn, GLenum shader_type, const GLchar* entrypoint, std
   }
 }
 
+Shader::Shader(const Shader& o) :
+  shader_id(o.shader_id), shader_type(o.shader_type), fn(o.fn.c_str()),
+  entrypoint(o.entrypoint.c_str()), refc(o.refc)
+{
+  if(!refc) {
+    err("Invalid shader passed!");
+  }
+  (*refc)++;
+}
+
+Shader& Shader::operator=(const Shader& o) {
+  if(*refc <= 1) {
+    flog << "Deleting Shader";
+    delete refc;
+    refc = nullptr;
+    glDeleteShader(shader_id);
+  } else {
+    (*refc)--;
+  }
+
+  refc = o.refc;
+  (*refc)++;
+  shader_id = o.shader_id;
+  shader_type = o.shader_type;
+  fn = o.fn.c_str();
+  entrypoint = o.entrypoint.c_str();
+  return *this;
+}
+
 Shader::~Shader() {
-  glDeleteShader(shader_id);
+  if(*refc <= 1) {
+    flog << "Deleting Shader";
+    delete refc;
+    refc = nullptr;
+    glDeleteShader(shader_id);
+  } else {
+    (*refc)--;
+  }
 }
 
 void Shader::reload() {
-   unsigned long size = std::filesystem::file_size(std::filesystem::path(fn));
-   std::fstream binary_stream(fn, std::ios::binary | std::ios::in);
-   std::vector<char> binary(size);
-   binary_stream.read(binary.data(), size);
-   shader_id = glCreateShader(shader_type);
-   glShaderBinary(1, &shader_id, GL_SHADER_BINARY_FORMAT_SPIR_V, binary.data(),
-		  binary.size());
-   glSpecializeShader(shader_id, entrypoint.c_str(),
-		      0,
-		      nullptr,
-		      nullptr);
-   int success = 0;
-   glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
-   if (!success) {
-     GLint buflen = 0;
-     glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &buflen);
-     char* buf = new char[buflen];
-     glGetShaderInfoLog(shader_id, buflen, &buflen, buf);
-     mlog << std::pair(logger::pri::ERR, "[DURING RELOAD] Unable to specialize shader!");
-     flog << "[ERROR][DURING RELOAD] Unable to specialize shader\n" << buf << std::endl;
-   } else {
-     mlog << "[DURING RELOAD] Shader " << shader_id << " Specialized";
-     flog << "[DURING RELOAD] Shader " << shader_id << " Specialized" << std::endl;
-   }
+  if(*refc <= 1) {
+    flog << "Deleting  and Reloading shader" << std::endl;
+    delete refc;
+    refc = nullptr;
+    glDeleteShader(shader_id);
+  } else {
+    (*refc)--;
+  }
+  refc = new std::size_t;
+  *refc = 1;
+  unsigned long size = std::filesystem::file_size(std::filesystem::path(fn));
+  std::fstream binary_stream(fn, std::ios::binary | std::ios::in);
+  std::vector<char> binary(size);
+  binary_stream.read(binary.data(), size);
+  shader_id = glCreateShader(shader_type);
+  glShaderBinary(1, &shader_id, GL_SHADER_BINARY_FORMAT_SPIR_V, binary.data(),
+		 binary.size());
+  glSpecializeShader(shader_id, entrypoint.c_str(), 0, nullptr, nullptr);
+  int success = 0;
+  glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
+  if (!success) {
+    GLint buflen = 0;
+    glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &buflen);
+    char *buf = new char[buflen];
+    glGetShaderInfoLog(shader_id, buflen, &buflen, buf);
+    mlog << std::pair(logger::pri::ERR,
+		      "[DURING RELOAD] Unable to specialize shader!");
+    flog << "[ERROR][DURING RELOAD] Unable to specialize shader\n"
+	 << buf << std::endl;
+  } else {
+    mlog << "[DURING RELOAD] Shader " << shader_id << " Specialized";
+    flog << "[DURING RELOAD] Shader " << shader_id << " Specialized"
+	 << std::endl;
+  }
 }
 
 ShaderProgram::ShaderProgram() : shader_created(false), shaders({}){
@@ -122,6 +175,6 @@ void ShaderProgram::reload() {
 }
 
 ShaderProgram::~ShaderProgram() {
-  if(shader_created)
-    glDeleteProgram(program_id);
+  //if(shader_created)
+  //  glDeleteProgram(program_id);
 }

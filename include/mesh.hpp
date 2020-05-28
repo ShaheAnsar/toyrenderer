@@ -47,6 +47,7 @@ namespace Rend{
     std::vector<ubo_tup_switch> ubo_tup_switches;
     std::vector<ubo_tuple> ubo_tuples;
     std::vector<mat_tup> mat_tuples;
+    std::string base_dir;
     GLuint vao;
     GLuint vbo;
     bool success;

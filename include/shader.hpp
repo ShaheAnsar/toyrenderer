@@ -11,9 +11,14 @@ namespace Rend{
     GLenum shader_type;
     std::string fn;
     std::string entrypoint;
+    std::size_t* refc;
     friend class ShaderProgram;
   public:
-    Shader(std::string fn, GLenum shader_type = GL_VERTEX_SHADER, const GLchar* entrypoint = "main", std::pair<std::vector<GLuint>, std::vector<GLuint>> specialization_constants = {{},{}});
+    Shader(std::string fn, GLenum shader_type = GL_VERTEX_SHADER,
+	   const GLchar* entrypoint = "main", std::pair<std::vector<GLuint>,
+	   std::vector<GLuint>> specialization_constants = {{},{}});
+    Shader(const Shader&);
+    Shader& operator=(const Shader&);
     ~Shader();
     void reload();
   };
@@ -22,6 +27,7 @@ namespace Rend{
     bool shader_created;
     GLuint program_id;
     std::vector<Shader> shaders;
+    std::size_t* refc;
   public:
     ShaderProgram(std::vector<Shader> shaders);
     ShaderProgram();

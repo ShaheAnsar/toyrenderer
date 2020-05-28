@@ -8,7 +8,7 @@ namespace Rend{
   template<typename MaterialType, typename fn_mat>
   Mesh<MaterialType, fn_mat>::Mesh(std::string path, std::string base_dir, fn_mat func_mat) :
     vbo(0), vao(0), program_ids({}), texture_ids({}), ubo_tup_switches({}),
-    ubo_tuples({}), mat_tuples({}), mats({}), success(false) {
+    ubo_tuples({}), mat_tuples({}), mats({}), success(false), base_dir(base_dir){
     flog << "From Rend::Mesh" << std::endl;
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
@@ -95,7 +95,7 @@ namespace Rend{
 
     for(std::size_t i = 0; i < materials.size(); i++) {
       mats.push_back({});
-      func_mat(mats.back(), materials[i]);
+      func_mat(mats.back(), materials[i], base_dir);
     }
 
     success = true;

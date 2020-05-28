@@ -152,6 +152,7 @@ void  APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum sever
 
 int main(void) {
   flog.rdbuf()->pubsetbuf(0,0);
+  //glog.rdbuf()->pubsetbuf(0,0);
   stbi_set_flip_vertically_on_load(true);
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -187,6 +188,7 @@ int main(void) {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDepthFunc(GL_LEQUAL);
   glViewport(0, 0, WIDTH, HEIGHT);
+  flog << "Maximum Uniform Buffer Size: " << GL_MAX_UNIFORM_BLOCK_SIZE << std::endl;
  int tw = 0, th = 0, tn = 0;
   unsigned char* td = stbi_load("assets/woodfloor.png", &tw, &th, &tn, 0);
   if(!td) mlog << std::pair<logger::pri, std::string>{logger::pri::ERR, "Unable to load in texture"};
@@ -236,16 +238,19 @@ int main(void) {
   glBindBufferBase(GL_UNIFORM_BUFFER, 0, sponza_light_ubo);
   glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-  auto fn_mat = [](basic_mat& m, tinyobj::material_t& m_t) -> void {
+  auto fn_mat = [](basic_mat& m, tinyobj::material_t& m_t, const std::string& base_dir) -> void {
 		  bool ambient_exists = !m_t.ambient_texname.empty();
 		  bool diffuse_exists = !m_t.diffuse_texname.empty();
 		  bool specular_exists = !m_t.specular_texname.empty();
+		  bool normal_exists = !m_t.normal_texname.empty();
 		  float ambient_existsf = ambient_exists ? 1.0f : 0.0f;
 		  float diffuse_existsf = diffuse_exists ? 1.0f : 0.0f;
 		  float specular_existsf = specular_exists ? 1.0f : 0.0f;
 		  m.mat_ubo.ambient_c = {m_t.ambient[0],m_t.ambient[1],m_t.ambient[2], ambient_existsf};
 		  m.mat_ubo.diffuse_c = {m_t.diffuse[0],m_t.diffuse[1],m_t.diffuse[2], diffuse_existsf};
 		  m.mat_ubo.specular_c = {m_t.specular[0],m_t.specular[1],m_t.specular[2], specular_existsf};
+		  m.mat_ubo.bitmap = glm::uvec4(0);
+		  m.mat_ubo.bitmap[0] = normal_exists ? 1 : 0;
 		  glGenBuffers(1, &m.ubo);
 		  glBindBuffer(GL_UNIFORM_BUFFER, m.ubo);
 		  glBufferData(GL_UNIFORM_BUFFER, sizeof(m.mat_ubo), &m.mat_ubo, GL_STREAM_DRAW);
@@ -253,7 +258,7 @@ int main(void) {
 		  if(ambient_exists) {
 		    std::string tex_name = m_t.ambient_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
-		    m.ambient_t = std::make_optional(Rend::Texture("assets/sponza/" + tex_name, GL_RGBA));
+		    m.ambient_t = std::make_optional(Rend::Texture(base_dir + tex_name, GL_RGBA));
 		  }
 		  else {
 		    m.ambient_t = std::nullopt;
@@ -261,7 +266,7 @@ int main(void) {
 		  if(diffuse_exists) {
 		    std::string tex_name = m_t.diffuse_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
-		    m.diffuse_t = std::make_optional(Rend::Texture("assets/sponza/" + tex_name, GL_RGBA));
+		    m.diffuse_t = std::make_optional(Rend::Texture(base_dir + tex_name, GL_RGBA));
 		  }
 		  else {
 		    m.diffuse_t = std::nullopt;
@@ -270,14 +275,24 @@ int main(void) {
 		  if(specular_exists) {
 		    std::string tex_name = m_t.specular_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
-		    m.specular_t = std::make_optional(Rend::Texture("assets/sponza/" + tex_name, GL_RGBA));
+		    m.specular_t = std::make_optional(Rend::Texture(base_dir + tex_name, GL_RGBA));
 		  }
 		  else {
 		    m.specular_t = std::nullopt;
 		  }
 
+		  if(normal_exists) {
+		    std::string tex_name = m_t.normal_texname;
+		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
+		    m.normal_t = std::make_optional(Rend::Texture(base_dir + tex_name, GL_RGB));
+		    flog << "Found normal map!";
+		  }
+		  else {
+		    m.normal_t = std::nullopt;
+		  }
+
 		};
-  Rend::Mesh<basic_mat, void (*)(basic_mat&, tinyobj::material_t&)>
+  Rend::Mesh<basic_mat, void (*)(basic_mat&, tinyobj::material_t&, const std::string&)>
     sponza_test("assets/sponza/sponza.obj", "assets/sponza/", fn_mat);
   flog << "Regarding Sponza:\n"
        << "Materials: " << sponza_test.mats.size() << std::endl;
@@ -297,9 +312,9 @@ int main(void) {
 	 << "LEN: " << len << "\n"
 	 << "------" << std::endl;
   }
-  Rend::MeshInstance<basic_mat, void(*)(basic_mat&, tinyobj::material_t&)> sponza_inst;
+  Rend::MeshInstance<basic_mat, void(*)(basic_mat&, tinyobj::material_t&, const std::string&)> sponza_inst;
   sponza_inst.mesh_ptr = &sponza_test;
-  Rend::Mesh<basic_mat, void (*)(basic_mat&, tinyobj::material_t&)>
+  Rend::Mesh<basic_mat, void (*)(basic_mat&, tinyobj::material_t&, const std::string&)>
     buddha("assets/buddha/buddha.obj", "assets/buddha/", fn_mat);
   Rend::Texture cel_shade("assets/LUTS/cel_shade.png");
   cel_shade.bind(0);
@@ -447,6 +462,24 @@ int main(void) {
 
   Rend::ShaderProgram quad_prog2{ { Rend::Shader("shaders/quad_postfx_v.spv", GL_VERTEX_SHADER),
 				 Rend::Shader("shaders/quad_postfx_f.spv", GL_FRAGMENT_SHADER) } };
+
+
+  std::vector<float> sim_ipos_iv;
+  for(std::size_t i = 0; i < 1000; i++) {
+    for(std::size_t j = 0; j < 1000; j++) {
+      float xpos =  (float)i/1000;
+      float ypos =  (float)j/1000;
+      sim_ipos_iv.push_back(xpos);
+      sim_ipos_iv.push_back(ypos);
+      sim_ipos_iv.push_back(0.f);
+      sim_ipos_iv.push_back(0.f);
+    }
+  }
+  GLuint sim_buf;
+  glGenBuffers(1, &sim_buf);
+  glBindBuffer(GL_SHADER_STORAGE_BUFFER, sim_buf);
+  glBufferData(GL_SHADER_STORAGE_BUFFER, sim_ipos_iv.size()*sizeof(float), sim_ipos_iv.data(), GL_DYNAMIC_DRAW);
+  glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
   
 
   ImGui::CreateContext();
@@ -502,6 +535,7 @@ int main(void) {
   int D_KEY_pressed = GLFW_RELEASE;
   int R_KEY_pressed = GLFW_RELEASE;
   float R_KEY_timer = 0.0f;
+  bool switch_render = false;
   glBindVertexArray(sponza_test.vao);
   while (!glfwWindowShouldClose(win)) {
     ImGui_ImplOpenGL3_NewFrame();
@@ -522,7 +556,13 @@ int main(void) {
     ImGui::ColorEdit3("Buddha Outline Color", &buddha_outline_col[0]);
     ImGui::InputFloat3("Sponza Position", &sponza_inst.position[0]);
     ImGui::InputFloat3("Sponza Scale", &sponza_inst.scale[0]);
-    ImGui::InputFloat4("Sponza Rotation [u, vhat]", &sponza_inst.rotation[0]);
+    ImGui::InputFloat4("Sponza Rotation [vhat, u]", &sponza_inst.rotation[0]);
+    if(ImGui::Button("Switch Render")) {
+      switch_render = !switch_render;
+    }
+    if(ImGui::Button("Reload Sponza Shader")) {
+      sponza_prog.reload();
+    }
     bool reload_buddha_shaders = ImGui::Button("Reload Buddha Shader");
     if(reload_buddha_shaders) {
       buddha_prog.reload();
@@ -641,74 +681,78 @@ int main(void) {
     sponza_inst.tick(perspectiveM, viewM);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    //glBindFramebuffer(GL_FRAMEBUFFER, fbs[SPONZA_FB]);
     sponza_fb.bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     buddha_fb.bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    if(!switch_render)
+    {
+      sponza_fb.bind();
+      sponza_prog.use_program();
+      sponza_inst.ubo.bind(5);
+      glBindVertexArray(sponza_test.vao);
+      for (auto &[mat_i, i, len] : sponza_test.mat_tuples) {
+        if (sponza_test.mats[mat_i].ambient_t.has_value())
+          sponza_test.mats[mat_i].ambient_t.value().bind(0);
+        if (sponza_test.mats[mat_i].diffuse_t.has_value())
+          sponza_test.mats[mat_i].diffuse_t.value().bind(1);
+        if (sponza_test.mats[mat_i].specular_t.has_value())
+          sponza_test.mats[mat_i].specular_t.value().bind(2);
+        if (sponza_test.mats[mat_i].normal_t.has_value()) {
+          sponza_test.mats[mat_i].normal_t.value().bind(3);
+        }
+        // cel_shade.bind(3);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 1, sponza_test.mats[mat_i].ubo);
+        glDrawArrays(GL_TRIANGLES, 3 * i, len * 3);
+      }
+      glActiveTexture(GL_TEXTURE3);
+      glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+      glBindVertexArray(skybox_vao);
+      glBindBufferBase(GL_UNIFORM_BUFFER, 5, skybox_ubo);
+      skybox_prog.use_program();
+      glDrawArrays(GL_TRIANGLES, 0, skyboxVertices.size() / 3);
 
-    //glBindFramebuffer(GL_FRAMEBUFFER, fbs[SPONZA_FB]);
-    sponza_fb.bind();
-    sponza_prog.use_program();
-    sponza_inst.ubo.bind(5);
-    glBindVertexArray(sponza_test.vao);
-    for(auto&[mat_i,i,len] : sponza_test.mat_tuples) {
-      if(sponza_test.mats[mat_i].ambient_t.has_value())
-	sponza_test.mats[mat_i].ambient_t.value().bind(0);
-      if(sponza_test.mats[mat_i].diffuse_t.has_value())
-	sponza_test.mats[mat_i].diffuse_t.value().bind(1);
-      if(sponza_test.mats[mat_i].specular_t.has_value())
-	sponza_test.mats[mat_i].specular_t.value().bind(2);
-      cel_shade.bind(3);
-      glBindBufferBase(GL_UNIFORM_BUFFER, 1, sponza_test.mats[mat_i].ubo);
-      glDrawArrays(GL_TRIANGLES, 3*i, len*3);
+      // glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
+      // glBindBufferBase(GL_UNIFORM_BUFFER, 5, buddha_ubo);
+      buddha_fb.bind();
+      // glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+      buddha_ubo.bind(5);
+      glBindVertexArray(buddha.vao);
+      buddha_prog.use_program();
+      for (auto &[mat_i, i, len] : buddha.mat_tuples) {
+        if (buddha.mats.empty())
+          goto buddha_matskip;
+        if (buddha.mats[mat_i].ambient_t.has_value())
+          buddha.mats[mat_i].ambient_t.value().bind(0);
+        if (buddha.mats[mat_i].diffuse_t.has_value())
+          buddha.mats[mat_i].diffuse_t.value().bind(1);
+        if (buddha.mats[mat_i].specular_t.has_value())
+          buddha.mats[mat_i].specular_t.value().bind(2);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 1, buddha.mats[mat_i].ubo);
+      buddha_matskip:
+        cel_shade.bind(0);
+        glDrawArrays(GL_TRIANGLES, 3 * i, len * 3);
+      }
+
+      // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+      postfx_fb.bind();
+      sponza_colorT.bind(0);
+      sponza_depthT.bind(1);
+      buddha_color_tex.bind(2);
+      buddha_depth_tex.bind(3);
+      buddha_color_tex2.bind(4);
+      glBindVertexArray(quad_vao);
+      quad_prog.use_program();
+      glDrawArrays(GL_TRIANGLES, 0, quad.size() / 4);
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
+      glDepthMask(GL_FALSE);
+      quad_prog2.use_program();
+      postfx_colorT.bind(0);
+      glDrawArrays(GL_TRIANGLES, 0, quad.size() / 4);
+      glDepthMask(0xff);
     }
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
-    glBindVertexArray(skybox_vao);
-    glBindBufferBase(GL_UNIFORM_BUFFER, 5, skybox_ubo);
-    skybox_prog.use_program();
-    glDrawArrays(GL_TRIANGLES, 0, skyboxVertices.size() / 3);
-
-    //glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
-    //glBindBufferBase(GL_UNIFORM_BUFFER, 5, buddha_ubo);
-    buddha_fb.bind();
-    //glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    buddha_ubo.bind(5);
-    glBindVertexArray(buddha.vao);
-    buddha_prog.use_program();
-    for(auto&[mat_i,i,len] : buddha.mat_tuples) {
-      if(buddha.mats.empty()) goto buddha_matskip;
-      if(buddha.mats[mat_i].ambient_t.has_value())
-      	buddha.mats[mat_i].ambient_t.value().bind(0);
-      if(buddha.mats[mat_i].diffuse_t.has_value())
-      	buddha.mats[mat_i].diffuse_t.value().bind(1);
-      if(buddha.mats[mat_i].specular_t.has_value())
-      	buddha.mats[mat_i].specular_t.value().bind(2);
-      glBindBufferBase(GL_UNIFORM_BUFFER, 1, buddha.mats[mat_i].ubo);
-    buddha_matskip:
-      cel_shade.bind(0);
-      glDrawArrays(GL_TRIANGLES, 3*i, len*3);
-    }
-
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    postfx_fb.bind();
-    sponza_colorT.bind(0);
-    sponza_depthT.bind(1);
-    buddha_color_tex.bind(2);
-    buddha_depth_tex.bind(3);
-    buddha_color_tex2.bind(4);
-    glBindVertexArray(quad_vao);
-    quad_prog.use_program();
-    glDrawArrays(GL_TRIANGLES, 0, quad.size()/4);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDepthMask(GL_FALSE);
-    quad_prog2.use_program();
-    postfx_colorT.bind(0);
-    glDrawArrays(GL_TRIANGLES, 0, quad.size()/4);
-    glDepthMask(0xff);
-
+    
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     glfwPollEvents();

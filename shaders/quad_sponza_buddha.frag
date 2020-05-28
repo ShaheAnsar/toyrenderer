@@ -63,7 +63,7 @@ vec4 compute_fog() {
   f /= (fog_zend - fog_zstart);
   f = sqrt(f);
   f = clamp(f, 0.0f, 1.0f);
-  vec4 fog_color = vec4(0.7f);
+  vec4 fog_color = vec4(0.5f);
   fog_color.a = 1 - f;
   return fog_color;
 }

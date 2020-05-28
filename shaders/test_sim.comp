@@ -1,0 +1,29 @@
+#version 460 core
+
+layout(local_size_x = 1000) in:
+
+const float gravity1 = 1000;
+const float gravity2 = 1000;
+const vec2 bhpos1 = vec2(0.25, 0.25);
+const vec2 bhpos2 = vec2(0.75, 0.75);
+const float pmass = 0.1;
+const float dt = 0.0005;
+
+layout(std430, binding = 0) {
+  float pos_vel[0];
+}
+
+void main() {
+  uint i = gl_GlobalInvocationID.x;
+  vec2 p = vec2(pos_vel[i*4], pos_vel[i*4 + 1]);
+  vec2 v = vec2(pos_vel[i*4 + 2], pos_vel[i*4 + 3]);
+  vec2 F = gravity1*(bhpos1 - p)/dot(bhpos1 - p, bhpos1 - p);
+  F += gravity2*(bhpos2 - p)/dot(bhpos2 - p, bhpos2 - p);
+  vec2 a = F/pmass;
+  vec2 p_f = p + v*dt + 0.5*a*dt*dt;
+  vec2 v_f = v + a*dt;
+  pos_vel[i*4] = p_f.x;
+  pos_vel[i*4 + 1] = p_f.y;
+  pos_vel[i*4 + 2] = v_f.x;
+  pos_vel[i*4 + 3] = v_f.y;
+}
