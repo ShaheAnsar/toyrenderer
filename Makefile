@@ -7,7 +7,8 @@ OBJ=$(foreach i,$(SRC),$(i:src/%.cpp=obj/%.o)) $(CSRC:src/%.c=obj/%.o)
 
 VSHADERS=$(shell fd "\.vert$$" ./shaders/)
 FSHADERS=$(shell fd "\.frag$$" ./shaders/)
-SPIRV=$(foreach i,$(VSHADERS),$(i:%.vert=%_v.spv)) $(foreach i,$(FSHADERS),$(i:%.frag=%_f.spv))
+CSHADERS=$(shell fd "\.comp$$" ./shaders/)
+SPIRV=$(foreach i,$(VSHADERS),$(i:%.vert=%_v.spv)) $(foreach i,$(FSHADERS),$(i:%.frag=%_f.spv)) $(foreach i,$(CSHADERS),$(i:%.comp=%_c.spv))
 
 CXX?=g++
 CC?=gcc
@@ -33,10 +34,13 @@ obj/%.o: src/%.c
 	$(CC) $(CFLAGS) $(INCLUDE) -c -o $@ $<
 
 shaders/%_v.spv: shaders/%.vert
-	glslangValidator -G -V $< -o $@
+	glslangValidator -G $< -o $@
 
 shaders/%_f.spv: shaders/%.frag
-	glslangValidator -G -V $< -o $@
+	glslangValidator -G $< -o $@
+
+shaders/%_c.spv: shaders/%.comp
+	glslangValidator -G $< -o $@
 
 clean:
 	-rm $(TARGET)

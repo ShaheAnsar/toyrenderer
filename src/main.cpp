@@ -49,8 +49,8 @@
 
 
 
-#define WIDTH 1280
-#define HEIGHT 720
+#define WIDTH 1920
+#define HEIGHT 1080
 
 GLFWwindow *win = nullptr;
 std::fstream glog("g.log", std::ios::out | std::ios::trunc);
@@ -180,6 +180,7 @@ int main(void) {
   }
   mlog << "Initialized GLAD";
   glDebugMessageCallback(debugCallback, nullptr);
+  glEnable(GL_PROGRAM_POINT_SIZE);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_STENCIL_TEST);
   glEnable(GL_CULL_FACE);
@@ -464,23 +465,36 @@ int main(void) {
 				 Rend::Shader("shaders/quad_postfx_f.spv", GL_FRAGMENT_SHADER) } };
 
 
-  std::vector<float> sim_ipos_iv;
-  for(std::size_t i = 0; i < 1000; i++) {
-    for(std::size_t j = 0; j < 1000; j++) {
-      float xpos =  (float)i/1000;
-      float ypos =  (float)j/1000;
-      sim_ipos_iv.push_back(xpos);
-      sim_ipos_iv.push_back(ypos);
-      sim_ipos_iv.push_back(0.f);
-      sim_ipos_iv.push_back(0.f);
+  std::vector<glm::vec4> RTSpheres; // The first Vec4 is <Pos, radius>. The second is the color.
+  const std::size_t RT_i_max = 3;
+  const std::size_t RT_j_max = 3;
+  for(std::size_t i = 0; i <= RT_i_max; i++) {
+    for(std::size_t j = 0; j <= RT_j_max; j++) {
+      RTSpheres.push_back(glm::vec4(i*400.0f - 600.f, j*400.0f - 600.f, 1000.f, 100.0f));
+      glm::vec4 color{i/3.f + 0.2f, j/3.f + 0.2f, i*j/9.f + 0.2f, 1.0f};
+      RTSpheres.push_back(color);
     }
   }
+  GLuint sim_tex;
+  glGenTextures(1, &sim_tex);
+  glBindTexture(GL_TEXTURE_2D, sim_tex);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, eGlobals.width, eGlobals.height, 0, GL_RGBA, GL_FLOAT, nullptr);
+  glBindTexture(GL_TEXTURE_2D, 0);
   GLuint sim_buf;
   glGenBuffers(1, &sim_buf);
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, sim_buf);
-  glBufferData(GL_SHADER_STORAGE_BUFFER, sim_ipos_iv.size()*sizeof(float), sim_ipos_iv.data(), GL_DYNAMIC_DRAW);
+  glBufferData(GL_SHADER_STORAGE_BUFFER, RTSpheres.size()*sizeof(glm::vec4), RTSpheres.data(), GL_DYNAMIC_DRAW);
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-  
+  Rend::Shader sim_shader{"shaders/test_sim_c.spv", GL_COMPUTE_SHADER};
+  Rend::ShaderProgram sim_prog{{sim_shader}};
+  Rend::Shader simr_shader_v{"shaders/test_sim_v.spv", GL_VERTEX_SHADER};
+  Rend::Shader simr_shader_f{"shaders/test_sim_f.spv", GL_FRAGMENT_SHADER};
+  Rend::ShaderProgram simr_prog{{simr_shader_f, simr_shader_v}};
+
 
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
@@ -572,6 +586,10 @@ int main(void) {
     }
     if(ImGui::Button("Reload POSTFX shader")) {
       quad_prog2.reload();
+    }
+    if(ImGui::Button("Reload Simulation Shaders")) {
+      sim_prog.reload();
+      simr_prog.reload();
     }
 
     perspectiveM = mainDCamera.getPerspectiveM();
@@ -751,6 +769,19 @@ int main(void) {
       postfx_colorT.bind(0);
       glDrawArrays(GL_TRIANGLES, 0, quad.size() / 4);
       glDepthMask(0xff);
+    } else {
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
+      sim_prog.use_program();
+      glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, sim_buf);
+      glBindImageTexture(0, sim_tex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA16F);
+      glDispatchCompute(eGlobals.width/10, eGlobals.height/10, 1);
+      glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+      glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, sim_tex);
+      simr_prog.use_program();
+      glBindVertexArray(quad_vao);
+      glDrawArrays(GL_TRIANGLES, 0, quad.size()/4);
     }
     
     ImGui::Render();
