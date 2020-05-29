@@ -179,13 +179,14 @@ int main(void) {
     std::exit(-1);
   }
   mlog << "Initialized GLAD";
-  glDebugMessageCallback(debugCallback, nullptr);
   glEnable(GL_PROGRAM_POINT_SIZE);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_STENCIL_TEST);
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEBUG_OUTPUT);
   glEnable(GL_BLEND);
+  glDebugMessageCallback(debugCallback, nullptr);
+  glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDepthFunc(GL_LEQUAL);
   glViewport(0, 0, WIDTH, HEIGHT);
@@ -494,6 +495,7 @@ int main(void) {
   Rend::Shader simr_shader_v{"shaders/test_sim_v.spv", GL_VERTEX_SHADER};
   Rend::Shader simr_shader_f{"shaders/test_sim_f.spv", GL_FRAGMENT_SHADER};
   Rend::ShaderProgram simr_prog{{simr_shader_f, simr_shader_v}};
+  Rend::UniformBuffer<glm::mat4> sim_ubo;
 
 
   ImGui::CreateContext();
@@ -771,6 +773,9 @@ int main(void) {
       glDepthMask(0xff);
     } else {
       glBindFramebuffer(GL_FRAMEBUFFER, 0);
+      sim_ubo.buffer = mainDCamera.getViewM();
+      sim_ubo.upload();
+      sim_ubo.bind(19);
       sim_prog.use_program();
       glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, sim_buf);
       glBindImageTexture(0, sim_tex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA16F);
@@ -782,6 +787,16 @@ int main(void) {
       simr_prog.use_program();
       glBindVertexArray(quad_vao);
       glDrawArrays(GL_TRIANGLES, 0, quad.size()/4);
+      //for(std::size_t i = 0; i <= RT_i_max; i++) {
+      //	for(std::size_t j = 0; j <= RT_j_max; j++) {
+      //	  glm::vec4& pos = RTSpheres[2*( i*( RT_j_max + 1)  + j)];
+      //	  pos.x += 10*sin(time*i*j);
+      //	  pos.y += 10*cos(time*i*j);
+      //	}
+      //}
+      glBindBuffer(GL_SHADER_STORAGE_BUFFER, sim_buf);
+      glBufferData(GL_SHADER_STORAGE_BUFFER, RTSpheres.size() * sizeof(glm::vec4), RTSpheres.data(), GL_DYNAMIC_DRAW);
+      glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
     }
     
     ImGui::Render();

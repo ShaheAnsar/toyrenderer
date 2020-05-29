@@ -7,13 +7,25 @@ struct RTSphere{
   vec4 pos_r;
   vec4 color;
 };
-const uint num_spheres = 16;
+struct Light{
+  vec3 pos;
+};
+const uint num_spheres = 16;//Light;
 const uint width = 1920;
 const uint height = 1080;
 const float d = 540; // Distance of the "screen" from the camera, which is at the origin.
 const float far_plane = 100000.0f;
+vec4 bg;
 layout(std430, binding = 0) buffer RTSpheres{
-  RTSphere spheres[];
+  RTSphere sphere_buf[];
+};
+RTSphere spheres[num_spheres];
+layout(std140, binding = 20) uniform engineGLUBO{
+  float time;
+  float dt;
+};
+layout(std140, binding = 19) uniform view{
+  mat4 viewM;
 };
 layout(rgba16f, binding = 0) uniform image2D output_buf;
 
@@ -22,80 +34,138 @@ struct Ray{
   vec3 pos;
 };
 
+struct Hit{
+  vec3 pos;
+  vec3 norm;
+};
+
+struct RayColor{
+  vec4 color;
+  Ray r;
+  Hit h;
+  bool hit;
+};
+
+float rand(float seed) {
+  return 2*fract(100000*sin(seed));
+}
+
+vec3 usphere_randdir() {
+  vec3 d = vec3(1.0f);
+  d.x += d.x;
+  d.y += d.x;
+  d.x += d.y;
+  do{
+    d.x = rand(d.x);
+    d.y = rand(d.y);
+    d.z = rand(d.z);
+  } while(dot(d, d) >= 1.0f);
+  return normalize(d);
+}
+
 float get_hit(Ray r, RTSphere s) {
-  float determ = pow(dot(r.dir, s.pos_r.xyz), 2) - dot(s.pos_r.xyz, s.pos_r.xyz) + s.pos_r.w*s.pos_r.w;
+  vec3 p = s.pos_r.xyz - r.pos;
+  float determ = pow(dot(r.dir, p), 2) - dot(p, p) + s.pos_r.w*s.pos_r.w;
   if(determ < 0)
     return far_plane + 100.f;
   float root_determ = sqrt(determ);
-  float x1 = dot(r.dir, s.pos_r.xyz) + root_determ;
-  float x2 = dot(r.dir, s.pos_r.xyz) - root_determ;
+  float x1 = dot(r.dir, p) + root_determ;
+  float x2 = dot(r.dir, p) - root_determ;
+  if(x1 < 0) x1 = far_plane + 101.f;
+  if(x2 < 0) x2 = far_plane + 100.f;
   return min(x1, x2);
 }
 
-//vec4 get_color(Ray _r) {
-  //Ray r[5];
-//
-//}
-
-void main() {
-  vec4 color = vec4(0.1f);
-  color.b = 0.3f;
-  color.a = 1.0f;
-  vec4 bg = color;
-  float min_dist[5];
-  min_dist[0] = far_plane;
-  min_dist[1] = far_plane;
-  min_dist[2] = far_plane;
-  min_dist[3] = far_plane;
-  min_dist[4] = far_plane;
-  Ray r[5];
-  r[0].dir = vec3(float( gl_GlobalInvocationID.x) - float(width/2 ), float( gl_GlobalInvocationID.y) - float(height/2 ), d);
+RayColor get_color(Ray _r) {
+  Ray r[1];
+  r[0].pos = _r.pos;
+  r[0].dir = _r.dir;
   r[0].dir = normalize(r[0].dir);
-  r[1].dir = vec3(float( gl_GlobalInvocationID.x) - float(width/2 ), float( gl_GlobalInvocationID.y) - float(height/2 ), d) + vec3(0.5f, 0.5f, 0.0f);
-  r[1].dir = normalize(r[1].dir);
-  r[2].dir = vec3(float( gl_GlobalInvocationID.x) - float(width/2 ), float( gl_GlobalInvocationID.y) - float(height/2 ), d) + vec3(0.5f, -0.5f, 0.0f);
-  r[2].dir = normalize(r[2].dir);
-  r[3].dir = vec3(float( gl_GlobalInvocationID.x) - float(width/2 ), float( gl_GlobalInvocationID.y) - float(height/2 ), d) + vec3(-0.5f, -0.5f, 0.0f);
-  r[3].dir = normalize(r[3].dir);
-  r[4].dir = vec3(float( gl_GlobalInvocationID.x) - float(width/2 ), float( gl_GlobalInvocationID.y) - float(height/2 ), d) + vec3(-0.5f, 0.5f, 0.0f);
-  r[4].dir = normalize(r[4].dir);
 
-  vec4 colors[5];
+  float min_dist[1];
+  min_dist[0] = far_plane;
+
+  bg = vec4(0.1f);
+  bg.b = 0.3f;
+  bg.a = 1.0f;
+  vec4 color = vec4(0.0f);
+  vec4 colors[1];
   colors[0] = bg;
-  colors[1] = bg;
-  colors[2] = bg;
-  colors[3] = bg;
-  colors[4] = bg;
+
+  vec3 hpos;
+  vec3 hnormal;
+  bool hit = false;
   for(uint i = 0; i < num_spheres; i++) {
     float x = get_hit(r[0], spheres[i]);
-    float x1 = get_hit(r[1], spheres[i]);
-    float x2 = get_hit(r[2], spheres[i]);
-    float x3 = get_hit(r[3], spheres[i]);
-    float x4 = get_hit(r[4], spheres[i]);
     if(x < min_dist[0]) {
       min_dist[0] = x;
       colors[0] = spheres[i].color;
-    }
-
-    if(x1 < min_dist[1]) {
-      min_dist[1] = x1;
-      colors[1] = spheres[i].color;
-    }
-    if(x2 < min_dist[2]) {
-      min_dist[2] = x2;
-      colors[2] = spheres[i].color;
-    }
-    if(x3 < min_dist[3]) {
-      min_dist[3] = x3;
-      colors[3] = spheres[i].color;
-    }
-    if(x4 < min_dist[4]) {
-      min_dist[4] = x4;
-      colors[4] = spheres[i].color;
+      hpos = r[0].pos + x*r[0].dir;
+      hnormal = normalize(hpos - spheres[i].pos_r.xyz);
+      hit = true;
     }
   }
+  color = colors[0];
+  color.a = 1.0f;
+  RayColor rc;
+  rc.color = color;
+  rc.r = r[0];
+  rc.h.pos = hpos;
+  rc.h.norm = hnormal;
+  rc.hit = hit;
+  return rc;
+}
+
+void main() {
+  for(uint i = 0; i < num_spheres; i++) {
+    float r = sphere_buf[i].pos_r.w;
+    spheres[i].pos_r = vec4( ( viewM * vec4(sphere_buf[i].pos_r.xyz, 1.0f) ).xyz , r);
+    spheres[i].color = sphere_buf[i].color;
+  }
+  Light l;
+  l.pos = vec3(-3000*sin(time), -3000*cos(time), 1000);
+  l.pos = ( viewM * vec4(l.pos, 1.0f) ).xyz;
+  RayColor rc;
+  rc.r.dir = vec3(float( gl_GlobalInvocationID.x) - float(width/2 ), float( gl_GlobalInvocationID.y) - float(height/2 ), d);
+  rc.r.pos = vec3(000.0f);
+  rc.r.pos.z = 0000.f;
+  rc = get_color(rc.r);
+  vec4 c = rc.color;
+  bool initial_hit = rc.hit;
+  if(rc.hit == true) {
+    RayColor lightRayColor;
+    lightRayColor.r.pos = rc.h.pos;
+    lightRayColor.r.dir = normalize(l.pos - rc.h.pos);
+    lightRayColor.r.pos += 0.1f * rc.h.norm;
+    lightRayColor = get_color(lightRayColor.r);
+    c = rc.color; // * clamp( dot(rc.h.norm, normalize(l.pos - rc.h.pos)), 0.0f, 1.0f  );
+    if(lightRayColor.hit) {
+      c = bg;
+    }
+  }
+  for(uint i = 0; i < 3; i++) {
+    if(rc.hit == false)
+      break;
+    rc.r.pos = rc.h.pos;
+    rc.r.dir = reflect(rc.r.dir, rc.h.norm);
+    rc.r.dir = normalize(rc.r.dir);
+    rc.r.pos += rc.h.norm * 0.01;
+    rc.r.dir = 1000 * (rc.r.dir);
+    rc = get_color(rc.r);
+    if(rc.hit == false) {
+      rc.color = //vec4( 1/pow(0.5, i + 1) );
+	//vec4(1.0f);
+	2.5 * bg;
+    }
+    c *= /*pow(0.5, i + 1) */ rc.color;
+    if(rc.hit == false)
+      break;
+  }
+
+  const float ambient_factor = 0.5;
+  if(initial_hit)
+    c += ambient_factor*bg;
+
   //color = vec4(float(gl_GlobalInvocationID.x)/1920, gl_GlobalInvocationID.y/1080, 1.0f, 1.0f);
-  color = colors[0] + colors[1] + colors[2] + colors[3] + colors[4];
-  color /= 5;
-  imageStore(output_buf, ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y), color);
+  imageStore(output_buf, ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y), c);
 }
