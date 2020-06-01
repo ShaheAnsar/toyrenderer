@@ -46,6 +46,7 @@
 #include <uniformbuffer.hpp>
 #include <camera.hpp>
 #include <framebuffer.hpp>
+#include <resourceman.hpp>
 
 
 
@@ -56,6 +57,7 @@ GLFWwindow *win = nullptr;
 std::fstream glog("g.log", std::ios::out | std::ios::trunc);
 std::fstream flog("f.log", flog.trunc | flog.out);
 
+Rend::RMan::Texture tex_man;
 
 std::vector<float> quad{
 			//Pos, UV
@@ -150,7 +152,7 @@ void  APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum sever
 
 }
 
-int main(void) {
+static void setup() {
   flog.rdbuf()->pubsetbuf(0,0);
   //glog.rdbuf()->pubsetbuf(0,0);
   stbi_set_flip_vertically_on_load(true);
@@ -190,6 +192,10 @@ int main(void) {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDepthFunc(GL_LEQUAL);
   glViewport(0, 0, WIDTH, HEIGHT);
+}
+
+int main(void) {
+  setup();
   flog << "Maximum Uniform Buffer Size: " << GL_MAX_UNIFORM_BLOCK_SIZE << std::endl;
  int tw = 0, th = 0, tn = 0;
   unsigned char* td = stbi_load("assets/woodfloor.png", &tw, &th, &tn, 0);
@@ -260,7 +266,8 @@ int main(void) {
 		  if(ambient_exists) {
 		    std::string tex_name = m_t.ambient_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
-		    m.ambient_t = std::make_optional(Rend::Texture(base_dir + tex_name, GL_RGBA));
+		    
+		    m.ambient_t = std::make_optional(tex_man.add_texture(base_dir + tex_name, GL_RGBA));
 		  }
 		  else {
 		    m.ambient_t = std::nullopt;
@@ -268,7 +275,7 @@ int main(void) {
 		  if(diffuse_exists) {
 		    std::string tex_name = m_t.diffuse_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
-		    m.diffuse_t = std::make_optional(Rend::Texture(base_dir + tex_name, GL_RGBA));
+		    m.diffuse_t = std::make_optional(tex_man.add_texture(base_dir + tex_name, GL_RGBA));
 		  }
 		  else {
 		    m.diffuse_t = std::nullopt;
@@ -277,7 +284,7 @@ int main(void) {
 		  if(specular_exists) {
 		    std::string tex_name = m_t.specular_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
-		    m.specular_t = std::make_optional(Rend::Texture(base_dir + tex_name, GL_RGBA));
+		    m.specular_t = std::make_optional(tex_man.add_texture(base_dir + tex_name, GL_RGBA));
 		  }
 		  else {
 		    m.specular_t = std::nullopt;
@@ -286,7 +293,7 @@ int main(void) {
 		  if(normal_exists) {
 		    std::string tex_name = m_t.normal_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
-		    m.normal_t = std::make_optional(Rend::Texture(base_dir + tex_name, GL_RGB));
+		    m.normal_t = std::make_optional(tex_man.add_texture(base_dir + tex_name, GL_RGBA));
 		    flog << "Found normal map!";
 		  }
 		  else {
@@ -714,13 +721,13 @@ int main(void) {
       glBindVertexArray(sponza_test.vao);
       for (auto &[mat_i, i, len] : sponza_test.mat_tuples) {
         if (sponza_test.mats[mat_i].ambient_t.has_value())
-          sponza_test.mats[mat_i].ambient_t.value().bind(0);
+          tex_man.get( sponza_test.mats[mat_i].ambient_t.value() ).bind(0);
         if (sponza_test.mats[mat_i].diffuse_t.has_value())
-          sponza_test.mats[mat_i].diffuse_t.value().bind(1);
+          tex_man.get( sponza_test.mats[mat_i].diffuse_t.value() ).bind(1);
         if (sponza_test.mats[mat_i].specular_t.has_value())
-          sponza_test.mats[mat_i].specular_t.value().bind(2);
+          tex_man.get( sponza_test.mats[mat_i].specular_t.value() ).bind(2);
         if (sponza_test.mats[mat_i].normal_t.has_value()) {
-          sponza_test.mats[mat_i].normal_t.value().bind(3);
+          tex_man.get( sponza_test.mats[mat_i].normal_t.value() ).bind(3);
         }
         // cel_shade.bind(3);
         glBindBufferBase(GL_UNIFORM_BUFFER, 1, sponza_test.mats[mat_i].ubo);
@@ -744,11 +751,11 @@ int main(void) {
         if (buddha.mats.empty())
           goto buddha_matskip;
         if (buddha.mats[mat_i].ambient_t.has_value())
-          buddha.mats[mat_i].ambient_t.value().bind(0);
+          tex_man.get(buddha.mats[mat_i].ambient_t.value()).bind(0);
         if (buddha.mats[mat_i].diffuse_t.has_value())
-          buddha.mats[mat_i].diffuse_t.value().bind(1);
+          tex_man.get( buddha.mats[mat_i].diffuse_t.value() ).bind(1);
         if (buddha.mats[mat_i].specular_t.has_value())
-          buddha.mats[mat_i].specular_t.value().bind(2);
+          tex_man.get( buddha.mats[mat_i].specular_t.value() ).bind(2);
         glBindBufferBase(GL_UNIFORM_BUFFER, 1, buddha.mats[mat_i].ubo);
       buddha_matskip:
         cel_shade.bind(0);
