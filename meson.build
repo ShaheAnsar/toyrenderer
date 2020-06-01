@@ -1,5 +1,5 @@
 project('ogl', 'c' , 'cpp', version: '0.1', default_options: 'cpp_std=c++2a')
-root_dir = '/home/shahe/linux-hdd/development/C++/OGL2'
+root_dir = '/home/shahe/linux-hdd/development/C++/OGL'
 source_dir = join_paths(root_dir, 'src/')
 sources_return = run_command('fd', '\.(cpp|c)$$', source_dir)
 sources = sources_return.stdout().strip().split()
