@@ -20,6 +20,7 @@ namespace Rend{
       Texture(); // Initialize singleton class
       ~Texture(); // Uninitialize it
       void add_texture(const std::string& name, GLenum internal_image_format = GL_RGB);
+      void add_texture(const Rend::Texture& o);
       Rend::Texture& get(std::size_t i);
       const std::string& get_name(std::size_t n);
       void reload_texture(std::size_t i);

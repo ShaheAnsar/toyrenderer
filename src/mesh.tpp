@@ -29,6 +29,7 @@ namespace Rend{
 	   << err << std::endl;
     }
     flog << "[DEBUG] Loaded model " << path << " successfully" << std::endl;
+    flog << shapes.size();
     flog << "Material Info" << std::endl;
     for (auto &i : materials) {
       flog << "-----------------\n"
