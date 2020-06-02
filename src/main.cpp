@@ -310,13 +310,13 @@ int main(void) {
 	 << "Ambient Color: " << to_string(i.mat_ubo.ambient_c) << "\n" 
 	 << "Diffuse Color: " << to_string(i.mat_ubo.diffuse_c) << "\n"
 	 << "Specular Color: " << to_string(i.mat_ubo.specular_c) << "\n"
-	 << "Ambient Texture: " << (i.ambient_t > 0 ?
+	 << "Ambient Texture: " << (i.ambient_t >= 0 ?
 				    tex_man.texture_names[i.ambient_t]
 				    : "None") << "\n"
-	 << "Diffuse Texture: " << (i.diffuse_t > 0 ?
+	 << "Diffuse Texture: " << (i.diffuse_t >= 0 ?
 				    tex_man.texture_names[i.diffuse_t]
 				    : "None") << "\n"
-	 << "Specular Texture: " << (i.specular_t > 0 ?
+	 << "Specular Texture: " << (i.specular_t >= 0 ?
 				     tex_man.texture_names[i.specular_t]
 				     : "None") << std::endl;
   }
@@ -726,13 +726,13 @@ int main(void) {
       sponza_inst.ubo.bind(5);
       glBindVertexArray(sponza_test.vao);
       for (auto &[mat_i, i, len] : sponza_test.mat_tuples) {
-        if (sponza_test.mats[mat_i].ambient_t > 0)
+        if (sponza_test.mats[mat_i].ambient_t >= 0)
           tex_man.get( sponza_test.mats[mat_i].ambient_t ).bind(0);
-        if (sponza_test.mats[mat_i].diffuse_t > 0)
+        if (sponza_test.mats[mat_i].diffuse_t >= 0)
           tex_man.get( sponza_test.mats[mat_i].diffuse_t ).bind(1);
-        if (sponza_test.mats[mat_i].specular_t > 0)
+        if (sponza_test.mats[mat_i].specular_t >= 0)
           tex_man.get( sponza_test.mats[mat_i].specular_t ).bind(2);
-        if (sponza_test.mats[mat_i].normal_t > 0) {
+        if (sponza_test.mats[mat_i].normal_t >= 0) {
           tex_man.get( sponza_test.mats[mat_i].normal_t ).bind(3);
         }
         glBindBufferBase(GL_UNIFORM_BUFFER, 1, sponza_test.mats[mat_i].ubo);
@@ -752,11 +752,11 @@ int main(void) {
       for (auto &[mat_i, i, len] : buddha.mat_tuples) {
         if (buddha.mats.empty())
           goto buddha_matskip;
-        if (buddha.mats[mat_i].ambient_t > 0)
+        if (buddha.mats[mat_i].ambient_t >= 0)
           tex_man.get(buddha.mats[mat_i].ambient_t).bind(0);
-        if (buddha.mats[mat_i].diffuse_t > 0)
+        if (buddha.mats[mat_i].diffuse_t >= 0)
           tex_man.get( buddha.mats[mat_i].diffuse_t ).bind(1);
-        if (buddha.mats[mat_i].specular_t > 0)
+        if (buddha.mats[mat_i].specular_t >= 0)
           tex_man.get( buddha.mats[mat_i].specular_t ).bind(2);
         glBindBufferBase(GL_UNIFORM_BUFFER, 1, buddha.mats[mat_i].ubo);
       buddha_matskip:
