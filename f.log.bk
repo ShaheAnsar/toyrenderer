@@ -1,0 +1,1001 @@
+Maximum Uniform Buffer Size: 35376
+Shader 1 Specialized
+Shader 2 Specialized
+Texture: ./assets/woodfloor.png, Image Format: 4
+Shader 4 Specialized
+Shader 5 Specialized
+From Rend::Mesh
+[WARN] While loading model assets/sponza/sponza.obj:
+Both `d` and `Tr` parameters defined for "leaf". Use the value of `d` for dissolve (line 8 in .mtl.)
+Both `d` and `Tr` parameters defined for "vase_round". Use the value of `d` for dissolve (line 24 in .mtl.)
+Both `d` and `Tr` parameters defined for "Material__57". Use the value of `d` for dissolve (line 39 in .mtl.)
+Both `d` and `Tr` parameters defined for "Material__298". Use the value of `d` for dissolve (line 54 in .mtl.)
+Both `d` and `Tr` parameters defined for "bricks". Use the value of `d` for dissolve (line 70 in .mtl.)
+Both `d` and `Tr` parameters defined for "arch". Use the value of `d` for dissolve (line 86 in .mtl.)
+Both `d` and `Tr` parameters defined for "ceiling". Use the value of `d` for dissolve (line 100 in .mtl.)
+Both `d` and `Tr` parameters defined for "column_a". Use the value of `d` for dissolve (line 114 in .mtl.)
+Both `d` and `Tr` parameters defined for "floor". Use the value of `d` for dissolve (line 129 in .mtl.)
+Both `d` and `Tr` parameters defined for "column_c". Use the value of `d` for dissolve (line 144 in .mtl.)
+Both `d` and `Tr` parameters defined for "details". Use the value of `d` for dissolve (line 159 in .mtl.)
+Both `d` and `Tr` parameters defined for "column_b". Use the value of `d` for dissolve (line 173 in .mtl.)
+Both `d` and `Tr` parameters defined for "Material__47". Use the value of `d` for dissolve (line 188 in .mtl.)
+Both `d` and `Tr` parameters defined for "flagpole". Use the value of `d` for dissolve (line 200 in .mtl.)
+Both `d` and `Tr` parameters defined for "fabric_e". Use the value of `d` for dissolve (line 214 in .mtl.)
+Both `d` and `Tr` parameters defined for "fabric_d". Use the value of `d` for dissolve (line 228 in .mtl.)
+Both `d` and `Tr` parameters defined for "fabric_a". Use the value of `d` for dissolve (line 242 in .mtl.)
+Both `d` and `Tr` parameters defined for "fabric_g". Use the value of `d` for dissolve (line 256 in .mtl.)
+Both `d` and `Tr` parameters defined for "fabric_c". Use the value of `d` for dissolve (line 270 in .mtl.)
+Both `d` and `Tr` parameters defined for "fabric_f". Use the value of `d` for dissolve (line 284 in .mtl.)
+Both `d` and `Tr` parameters defined for "chain". Use the value of `d` for dissolve (line 298 in .mtl.)
+Both `d` and `Tr` parameters defined for "vase_hanging". Use the value of `d` for dissolve (line 314 in .mtl.)
+Both `d` and `Tr` parameters defined for "vase". Use the value of `d` for dissolve (line 329 in .mtl.)
+Both `d` and `Tr` parameters defined for "Material__25". Use the value of `d` for dissolve (line 344 in .mtl.)
+Both `d` and `Tr` parameters defined for "roof". Use the value of `d` for dissolve (line 359 in .mtl.)
+
+[DEBUG] Loaded model assets/sponza/sponza.obj successfully
+381Material Info
+-----------------
+Material Name: leaf
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0,0,0>
+Ambient Texture: textures\sponza_thorn_diff.png
+Diffuse Texture: textures\sponza_thorn_diff.png
+Specular Texture: 
+-----------------
+Material Name: vase_round
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0.01,0.01,0.01>
+Ambient Texture: textures\vase_round.png
+Diffuse Texture: textures\vase_round.png
+Specular Texture: 
+-----------------
+Material Name: Material__57
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0,0,0>
+Ambient Texture: textures\vase_plant.png
+Diffuse Texture: textures\vase_plant.png
+Specular Texture: 
+-----------------
+Material Name: Material__298
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0.01,0.01,0.01>
+Ambient Texture: textures\background.png
+Diffuse Texture: textures\background.png
+Specular Texture: 
+-----------------
+Material Name: bricks
+Ambient Color: <0.588,0.588,0.588>
+Diffuse Color: <1,1,1>
+Specular Color: <0.015,0.015,0.015>
+Ambient Texture: textures\spnza_bricks_a_diff.png
+Diffuse Texture: textures\spnza_bricks_a_diff.png
+Specular Texture: textures\spnza_bricks_a_spec.png
+-----------------
+Material Name: arch
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0.1,0.1,0.1>
+Ambient Texture: textures\sponza_arch_diff.png
+Diffuse Texture: textures\sponza_arch_diff.png
+Specular Texture: 
+-----------------
+Material Name: ceiling
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0.01,0.01,0.01>
+Ambient Texture: textures\sponza_ceiling_a_diff.png
+Diffuse Texture: textures\sponza_ceiling_a_diff.png
+Specular Texture: 
+-----------------
+Material Name: column_a
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0.01,0.01,0.01>
+Ambient Texture: textures\sponza_column_a_diff.png
+Diffuse Texture: textures\sponza_column_a_diff.png
+Specular Texture: 
+-----------------
+Material Name: floor
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0.5,0.5,0.5>
+Ambient Texture: textures\sponza_floor_a_diff.png
+Diffuse Texture: textures\sponza_floor_a_diff.png
+Specular Texture: textures\floor_gloss.png
+-----------------
+Material Name: column_c
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0.01,0.01,0.01>
+Ambient Texture: textures\sponza_column_c_diff.png
+Diffuse Texture: textures\sponza_column_c_diff.png
+Specular Texture: 
+-----------------
+Material Name: details
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0,0,0>
+Ambient Texture: textures\sponza_details_diff.png
+Diffuse Texture: textures\sponza_details_diff.png
+Specular Texture: 
+-----------------
+Material Name: column_b
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0,0,0>
+Ambient Texture: textures\sponza_column_b_diff.png
+Diffuse Texture: textures\sponza_column_b_diff.png
+Specular Texture: 
+-----------------
+Material Name: Material__47
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0,0,0>
+Ambient Texture: 
+Diffuse Texture: 
+Specular Texture: 
+-----------------
+Material Name: flagpole
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0.05,0.05,0.05>
+Ambient Texture: textures\sponza_flagpole_diff.png
+Diffuse Texture: textures\sponza_flagpole_diff.png
+Specular Texture: 
+-----------------
+Material Name: fabric_e
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0,0,0>
+Ambient Texture: textures\sponza_fabric_green_diff.png
+Diffuse Texture: textures\sponza_fabric_green_diff.png
+Specular Texture: 
+-----------------
+Material Name: fabric_d
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0,0,0>
+Ambient Texture: textures\sponza_fabric_blue_diff.png
+Diffuse Texture: textures\sponza_fabric_blue_diff.png
+Specular Texture: 
+-----------------
+Material Name: fabric_a
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0,0,0>
+Ambient Texture: textures\sponza_fabric_diff.png
+Diffuse Texture: textures\sponza_fabric_diff.png
+Specular Texture: 
+-----------------
+Material Name: fabric_g
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0,0,0>
+Ambient Texture: textures\sponza_curtain_blue_diff.png
+Diffuse Texture: textures\sponza_curtain_blue_diff.png
+Specular Texture: 
+-----------------
+Material Name: fabric_c
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0,0,0>
+Ambient Texture: textures\sponza_curtain_diff.png
+Diffuse Texture: textures\sponza_curtain_diff.png
+Specular Texture: 
+-----------------
+Material Name: fabric_f
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0,0,0>
+Ambient Texture: textures\sponza_curtain_green_diff.png
+Diffuse Texture: textures\sponza_curtain_green_diff.png
+Specular Texture: 
+-----------------
+Material Name: chain
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0.1,0.1,0.1>
+Ambient Texture: textures\chain_texture.png
+Diffuse Texture: textures\chain_texture.png
+Specular Texture: 
+-----------------
+Material Name: vase_hanging
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0.5,0.5,0.5>
+Ambient Texture: textures\vase_hanging.png
+Diffuse Texture: textures\vase_hanging.png
+Specular Texture: textures\vase_hanging.png
+-----------------
+Material Name: vase
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0,0,0>
+Ambient Texture: textures\vase_dif.png
+Diffuse Texture: textures\vase_dif.png
+Specular Texture: 
+-----------------
+Material Name: Material__25
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0.01,0.01,0.01>
+Ambient Texture: textures\lion.png
+Diffuse Texture: textures\lion.png
+Specular Texture: 
+-----------------
+Material Name: roof
+Ambient Color: <1,1,1>
+Diffuse Color: <1,1,1>
+Specular Color: <0,0,0>
+Ambient Texture: textures\sponza_roof_diff.png
+Diffuse Texture: textures\sponza_roof_diff.png
+Specular Texture: 
+[MODEL] Shapes: 381
+[MODEL] materials: 25
+VBO size/8 786801Texture: assets/sponza/textures/sponza_thorn_diff.png, Image Format: 4
+[WARN] Texture assets/sponza/textures/sponza_thorn_diff.png already exists
+Texture: assets/sponza/textures/vase_round.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/vase_round.png already exists
+Texture: assets/sponza/textures/vase_plant.png, Image Format: 4
+[WARN] Texture assets/sponza/textures/vase_plant.png already exists
+Texture: assets/sponza/textures/background.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/background.png already exists
+Texture: assets/sponza/textures/spnza_bricks_a_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/spnza_bricks_a_diff.png already exists
+Texture: assets/sponza/textures/spnza_bricks_a_spec.png, Image Format: 1
+Texture: assets/sponza/textures/sponza_arch_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_arch_diff.png already exists
+Texture: assets/sponza/textures/sponza_ceiling_a_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_ceiling_a_diff.png already exists
+Texture: assets/sponza/textures/sponza_column_a_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_column_a_diff.png already exists
+Texture: assets/sponza/textures/sponza_floor_a_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_floor_a_diff.png already exists
+Texture: assets/sponza/textures/floor_gloss.png, Image Format: 4
+Texture: assets/sponza/textures/sponza_column_c_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_column_c_diff.png already exists
+Texture: assets/sponza/textures/sponza_details_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_details_diff.png already exists
+Texture: assets/sponza/textures/sponza_column_b_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_column_b_diff.png already exists
+Texture: assets/sponza/textures/sponza_flagpole_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_flagpole_diff.png already exists
+Texture: assets/sponza/textures/sponza_fabric_green_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_fabric_green_diff.png already exists
+Texture: assets/sponza/textures/sponza_fabric_blue_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_fabric_blue_diff.png already exists
+Texture: assets/sponza/textures/sponza_fabric_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_fabric_diff.png already exists
+Texture: assets/sponza/textures/sponza_curtain_blue_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_curtain_blue_diff.png already exists
+Texture: assets/sponza/textures/sponza_curtain_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_curtain_diff.png already exists
+Texture: assets/sponza/textures/sponza_curtain_green_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_curtain_green_diff.png already exists
+Texture: assets/sponza/textures/chain_texture.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/chain_texture.png already exists
+Texture: assets/sponza/textures/vase_hanging.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/vase_hanging.png already exists
+[WARN] Texture assets/sponza/textures/vase_hanging.png already exists
+Texture: assets/sponza/textures/vase_dif.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/vase_dif.png already exists
+Texture: assets/sponza/textures/lion.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/lion.png already exists
+Texture: assets/sponza/textures/sponza_roof_diff.png, Image Format: 3
+[WARN] Texture assets/sponza/textures/sponza_roof_diff.png already exists
+Materials: 103
+Regarding Sponza:
+Materials: 25
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.000000,0.000000,0.000000,0.000000>
+Ambient Texture: None
+Diffuse Texture: None
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.010000,0.010000,0.010000,0.000000>
+Ambient Texture: assets/sponza/textures/vase_round.png
+Diffuse Texture: assets/sponza/textures/vase_round.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.000000,0.000000,0.000000,0.000000>
+Ambient Texture: assets/sponza/textures/vase_plant.png
+Diffuse Texture: assets/sponza/textures/vase_plant.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.010000,0.010000,0.010000,0.000000>
+Ambient Texture: assets/sponza/textures/background.png
+Diffuse Texture: assets/sponza/textures/background.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <0.588000,0.588000,0.588000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.015000,0.015000,0.015000,1.000000>
+Ambient Texture: assets/sponza/textures/spnza_bricks_a_diff.png
+Diffuse Texture: assets/sponza/textures/spnza_bricks_a_diff.png
+Specular Texture: assets/sponza/textures/spnza_bricks_a_spec.png
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.100000,0.100000,0.100000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_arch_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_arch_diff.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.010000,0.010000,0.010000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_ceiling_a_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_ceiling_a_diff.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.010000,0.010000,0.010000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_column_a_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_column_a_diff.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.500000,0.500000,0.500000,1.000000>
+Ambient Texture: assets/sponza/textures/sponza_floor_a_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_floor_a_diff.png
+Specular Texture: assets/sponza/textures/floor_gloss.png
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.010000,0.010000,0.010000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_column_c_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_column_c_diff.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.000000,0.000000,0.000000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_details_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_details_diff.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.000000,0.000000,0.000000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_column_b_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_column_b_diff.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,0.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,0.000000>
+Specular Color: <0.000000,0.000000,0.000000,0.000000>
+Ambient Texture: None
+Diffuse Texture: None
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.050000,0.050000,0.050000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_flagpole_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_flagpole_diff.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.000000,0.000000,0.000000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_fabric_green_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_fabric_green_diff.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.000000,0.000000,0.000000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_fabric_blue_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_fabric_blue_diff.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.000000,0.000000,0.000000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_fabric_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_fabric_diff.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.000000,0.000000,0.000000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_curtain_blue_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_curtain_blue_diff.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.000000,0.000000,0.000000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_curtain_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_curtain_diff.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.000000,0.000000,0.000000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_curtain_green_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_curtain_green_diff.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.100000,0.100000,0.100000,0.000000>
+Ambient Texture: assets/sponza/textures/chain_texture.png
+Diffuse Texture: assets/sponza/textures/chain_texture.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.500000,0.500000,0.500000,1.000000>
+Ambient Texture: assets/sponza/textures/vase_hanging.png
+Diffuse Texture: assets/sponza/textures/vase_hanging.png
+Specular Texture: assets/sponza/textures/vase_hanging.png
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.000000,0.000000,0.000000,0.000000>
+Ambient Texture: assets/sponza/textures/vase_dif.png
+Diffuse Texture: assets/sponza/textures/vase_dif.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.010000,0.010000,0.010000,0.000000>
+Ambient Texture: assets/sponza/textures/lion.png
+Diffuse Texture: assets/sponza/textures/lion.png
+Specular Texture: None
+Material Info =>
+Ambient Color: <1.000000,1.000000,1.000000,1.000000>
+Diffuse Color: <1.000000,1.000000,1.000000,1.000000>
+Specular Color: <0.000000,0.000000,0.000000,0.000000>
+Ambient Texture: assets/sponza/textures/sponza_roof_diff.png
+Diffuse Texture: assets/sponza/textures/sponza_roof_diff.png
+Specular Texture: None
+------
+MAT ID: 0
+I: 0
+LEN: 3640
+------
+------
+MAT ID: 2
+I: 3640
+LEN: 468
+------
+------
+MAT ID: 1
+I: 4108
+LEN: 2211
+------
+------
+MAT ID: 3
+I: 6319
+LEN: 1362
+------
+------
+MAT ID: 4
+I: 7681
+LEN: 108
+------
+------
+MAT ID: 5
+I: 7789
+LEN: 280
+------
+------
+MAT ID: 6
+I: 8069
+LEN: 2332
+------
+------
+MAT ID: 7
+I: 10401
+LEN: 1456
+------
+------
+MAT ID: 5
+I: 11857
+LEN: 2896
+------
+------
+MAT ID: 8
+I: 14753
+LEN: 16
+------
+------
+MAT ID: 6
+I: 14769
+LEN: 2332
+------
+------
+MAT ID: 5
+I: 17101
+LEN: 1096
+------
+------
+MAT ID: 9
+I: 18197
+LEN: 3680
+------
+------
+MAT ID: 4
+I: 21877
+LEN: 204
+------
+------
+MAT ID: 6
+I: 22081
+LEN: 204
+------
+------
+MAT ID: 4
+I: 22285
+LEN: 148
+------
+------
+MAT ID: 5
+I: 22433
+LEN: 160
+------
+------
+MAT ID: 6
+I: 22593
+LEN: 112
+------
+------
+MAT ID: 5
+I: 22705
+LEN: 160
+------
+------
+MAT ID: 6
+I: 22865
+LEN: 112
+------
+------
+MAT ID: 5
+I: 22977
+LEN: 160
+------
+------
+MAT ID: 6
+I: 23137
+LEN: 112
+------
+------
+MAT ID: 5
+I: 23249
+LEN: 160
+------
+------
+MAT ID: 6
+I: 23409
+LEN: 112
+------
+------
+MAT ID: 5
+I: 23521
+LEN: 160
+------
+------
+MAT ID: 6
+I: 23681
+LEN: 112
+------
+------
+MAT ID: 5
+I: 23793
+LEN: 160
+------
+------
+MAT ID: 6
+I: 23953
+LEN: 112
+------
+------
+MAT ID: 5
+I: 24065
+LEN: 160
+------
+------
+MAT ID: 6
+I: 24225
+LEN: 112
+------
+------
+MAT ID: 5
+I: 24337
+LEN: 160
+------
+------
+MAT ID: 6
+I: 24497
+LEN: 112
+------
+------
+MAT ID: 5
+I: 24609
+LEN: 160
+------
+------
+MAT ID: 6
+I: 24769
+LEN: 112
+------
+------
+MAT ID: 5
+I: 24881
+LEN: 440
+------
+------
+MAT ID: 4
+I: 25321
+LEN: 32
+------
+------
+MAT ID: 5
+I: 25353
+LEN: 280
+------
+------
+MAT ID: 4
+I: 25633
+LEN: 54
+------
+------
+MAT ID: 10
+I: 25687
+LEN: 242
+------
+------
+MAT ID: 4
+I: 25929
+LEN: 24
+------
+------
+MAT ID: 10
+I: 25953
+LEN: 82
+------
+------
+MAT ID: 4
+I: 26035
+LEN: 24
+------
+------
+MAT ID: 10
+I: 26059
+LEN: 556
+------
+------
+MAT ID: 4
+I: 26615
+LEN: 50
+------
+------
+MAT ID: 9
+I: 26665
+LEN: 3408
+------
+------
+MAT ID: 4
+I: 30073
+LEN: 50
+------
+------
+MAT ID: 8
+I: 30123
+LEN: 5
+------
+------
+MAT ID: 7
+I: 30128
+LEN: 1360
+------
+------
+MAT ID: 5
+I: 31488
+LEN: 3736
+------
+------
+MAT ID: 11
+I: 35224
+LEN: 23208
+------
+------
+MAT ID: 12
+I: 58432
+LEN: 18
+------
+------
+MAT ID: 4
+I: 58450
+LEN: 64
+------
+------
+MAT ID: 13
+I: 58514
+LEN: 5456
+------
+------
+MAT ID: 0
+I: 63970
+LEN: 27796
+------
+------
+MAT ID: 14
+I: 91766
+LEN: 5504
+------
+------
+MAT ID: 15
+I: 97270
+LEN: 5504
+------
+------
+MAT ID: 16
+I: 102774
+LEN: 5504
+------
+------
+MAT ID: 14
+I: 108278
+LEN: 5504
+------
+------
+MAT ID: 15
+I: 113782
+LEN: 5504
+------
+------
+MAT ID: 14
+I: 119286
+LEN: 5504
+------
+------
+MAT ID: 16
+I: 124790
+LEN: 5504
+------
+------
+MAT ID: 15
+I: 130294
+LEN: 5504
+------
+------
+MAT ID: 13
+I: 135798
+LEN: 11040
+------
+------
+MAT ID: 17
+I: 146838
+LEN: 4864
+------
+------
+MAT ID: 18
+I: 151702
+LEN: 4608
+------
+------
+MAT ID: 19
+I: 156310
+LEN: 4864
+------
+------
+MAT ID: 18
+I: 161174
+LEN: 4864
+------
+------
+MAT ID: 19
+I: 166038
+LEN: 4608
+------
+------
+MAT ID: 18
+I: 170646
+LEN: 4864
+------
+------
+MAT ID: 17
+I: 175510
+LEN: 4608
+------
+------
+MAT ID: 19
+I: 180118
+LEN: 4864
+------
+------
+MAT ID: 18
+I: 184982
+LEN: 4608
+------
+------
+MAT ID: 17
+I: 189590
+LEN: 4864
+------
+------
+MAT ID: 20
+I: 194454
+LEN: 8
+------
+------
+MAT ID: 21
+I: 194462
+LEN: 4957
+------
+------
+MAT ID: 20
+I: 199419
+LEN: 8
+------
+------
+MAT ID: 21
+I: 199427
+LEN: 4957
+------
+------
+MAT ID: 20
+I: 204384
+LEN: 8
+------
+------
+MAT ID: 21
+I: 204392
+LEN: 4957
+------
+------
+MAT ID: 20
+I: 209349
+LEN: 8
+------
+------
+MAT ID: 21
+I: 209357
+LEN: 4957
+------
+------
+MAT ID: 2
+I: 214314
+LEN: 468
+------
+------
+MAT ID: 1
+I: 214782
+LEN: 2211
+------
+------
+MAT ID: 2
+I: 216993
+LEN: 468
+------
+------
+MAT ID: 1
+I: 217461
+LEN: 2211
+------
+------
+MAT ID: 2
+I: 219672
+LEN: 468
+------
+------
+MAT ID: 1
+I: 220140
+LEN: 2211
+------
+------
+MAT ID: 2
+I: 222351
+LEN: 400
+------
+------
+MAT ID: 1
+I: 222751
+LEN: 2211
+------
+------
+MAT ID: 2
+I: 224962
+LEN: 400
+------
+------
+MAT ID: 1
+I: 225362
+LEN: 2211
+------
+------
+MAT ID: 2
+I: 227573
+LEN: 400
+------
+------
+MAT ID: 1
+I: 227973
+LEN: 2211
+------
+------
+MAT ID: 2
+I: 230184
+LEN: 400
+------
+------
+MAT ID: 1
+I: 230584
+LEN: 2211
+------
+------
+MAT ID: 22
+I: 232795
+LEN: 9184
+------
+------
+MAT ID: 23
+I: 241979
+LEN: 1521
+------
+------
+MAT ID: 3
+I: 243500
+LEN: 1362
+------
+------
+MAT ID: 23
+I: 244862
+LEN: 1521
+------
+------
+MAT ID: 3
+I: 246383
+LEN: 1362
+------
+------
+MAT ID: 4
+I: 247745
+LEN: 28
+------
+------
+MAT ID: 24
+I: 247773
+LEN: 14484
+------
+------
+MAT ID: 4
+I: 262257
+LEN: 10
+------
+From Rend::Mesh
+[DEBUG] Loaded model assets/buddha/buddha.obj successfully
+1Material Info
+[MODEL] Shapes: 1
+[MODEL] materials: 0
+VBO size/8 2446816Materials: 1
+Texture: assets/LUTS/cel_shade.png, Image Format: 4
+Shader 7 Specialized
+Shader 8 Specialized
+Shader 9 Specialized
+Shader 12 Specialized
+Shader 13 Specialized
+Shader 15 Specialized
+Shader 16 Specialized
+Shader 18 Specialized
+Shader 19 Specialized
+Shader 21 Specialized
+Shader 23 Specialized
+Shader 24 Specialized

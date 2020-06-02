@@ -267,37 +267,37 @@ int main(void) {
 		    std::string tex_name = m_t.ambient_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
 		    
-		    m.ambient_t = std::make_optional(tex_man.add_texture(base_dir + tex_name, GL_RGBA));
+		    m.ambient_t = tex_man.add_texture(base_dir + tex_name, GL_RGBA);
 		  }
 		  else {
-		    m.ambient_t = std::nullopt;
+		    m.ambient_t = -1;
 		  }
 		  if(diffuse_exists) {
 		    std::string tex_name = m_t.diffuse_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
-		    m.diffuse_t = std::make_optional(tex_man.add_texture(base_dir + tex_name, GL_RGBA));
+		    m.diffuse_t =tex_man.add_texture(base_dir + tex_name, GL_RGBA);
 		  }
 		  else {
-		    m.diffuse_t = std::nullopt;
+		    m.diffuse_t = -1;
 		  }
 
 		  if(specular_exists) {
 		    std::string tex_name = m_t.specular_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
-		    m.specular_t = std::make_optional(tex_man.add_texture(base_dir + tex_name, GL_RGBA));
+		    m.specular_t = tex_man.add_texture(base_dir + tex_name, GL_RGBA);
 		  }
 		  else {
-		    m.specular_t = std::nullopt;
+		    m.specular_t = -1;
 		  }
 
 		  if(normal_exists) {
 		    std::string tex_name = m_t.normal_texname;
 		    std::replace(tex_name.begin(), tex_name.end(), '\\', '/');
-		    m.normal_t = std::make_optional(tex_man.add_texture(base_dir + tex_name, GL_RGBA));
+		    m.normal_t = tex_man.add_texture(base_dir + tex_name, GL_RGBA);
 		    flog << "Found normal map!";
 		  }
 		  else {
-		    m.normal_t = std::nullopt;
+		    m.normal_t = -1;
 		  }
 
 		};
@@ -310,9 +310,15 @@ int main(void) {
 	 << "Ambient Color: " << to_string(i.mat_ubo.ambient_c) << "\n" 
 	 << "Diffuse Color: " << to_string(i.mat_ubo.diffuse_c) << "\n"
 	 << "Specular Color: " << to_string(i.mat_ubo.specular_c) << "\n"
-	 << "Ambient Texture: " << std::to_string(i.ambient_t.has_value()) << "\n"
-	 << "Diffuse Texture: " << std::to_string(i.diffuse_t.has_value()) << "\n"
-	 << "Specular Texture: " << std::to_string(i.specular_t.has_value()) << std::endl;
+	 << "Ambient Texture: " << (i.ambient_t > 0 ?
+				    tex_man.texture_names[i.ambient_t]
+				    : "None") << "\n"
+	 << "Diffuse Texture: " << (i.diffuse_t > 0 ?
+				    tex_man.texture_names[i.diffuse_t]
+				    : "None") << "\n"
+	 << "Specular Texture: " << (i.specular_t > 0 ?
+				     tex_man.texture_names[i.specular_t]
+				     : "None") << std::endl;
   }
   for(const auto&[mat_id, i, len] : sponza_test.mat_tuples) {
     flog << "------\n"
@@ -720,16 +726,15 @@ int main(void) {
       sponza_inst.ubo.bind(5);
       glBindVertexArray(sponza_test.vao);
       for (auto &[mat_i, i, len] : sponza_test.mat_tuples) {
-        if (sponza_test.mats[mat_i].ambient_t.has_value())
-          tex_man.get( sponza_test.mats[mat_i].ambient_t.value() ).bind(0);
-        if (sponza_test.mats[mat_i].diffuse_t.has_value())
-          tex_man.get( sponza_test.mats[mat_i].diffuse_t.value() ).bind(1);
-        if (sponza_test.mats[mat_i].specular_t.has_value())
-          tex_man.get( sponza_test.mats[mat_i].specular_t.value() ).bind(2);
-        if (sponza_test.mats[mat_i].normal_t.has_value()) {
-          tex_man.get( sponza_test.mats[mat_i].normal_t.value() ).bind(3);
+        if (sponza_test.mats[mat_i].ambient_t > 0)
+          tex_man.get( sponza_test.mats[mat_i].ambient_t ).bind(0);
+        if (sponza_test.mats[mat_i].diffuse_t > 0)
+          tex_man.get( sponza_test.mats[mat_i].diffuse_t ).bind(1);
+        if (sponza_test.mats[mat_i].specular_t > 0)
+          tex_man.get( sponza_test.mats[mat_i].specular_t ).bind(2);
+        if (sponza_test.mats[mat_i].normal_t > 0) {
+          tex_man.get( sponza_test.mats[mat_i].normal_t ).bind(3);
         }
-        // cel_shade.bind(3);
         glBindBufferBase(GL_UNIFORM_BUFFER, 1, sponza_test.mats[mat_i].ubo);
         glDrawArrays(GL_TRIANGLES, 3 * i, len * 3);
       }
@@ -740,22 +745,19 @@ int main(void) {
       skybox_prog.use_program();
       glDrawArrays(GL_TRIANGLES, 0, skyboxVertices.size() / 3);
 
-      // glBindFramebuffer(GL_FRAMEBUFFER, fbs[BUDDHA_FB]);
-      // glBindBufferBase(GL_UNIFORM_BUFFER, 5, buddha_ubo);
       buddha_fb.bind();
-      // glBindFramebuffer(GL_FRAMEBUFFER, fbo);
       buddha_ubo.bind(5);
       glBindVertexArray(buddha.vao);
       buddha_prog.use_program();
       for (auto &[mat_i, i, len] : buddha.mat_tuples) {
         if (buddha.mats.empty())
           goto buddha_matskip;
-        if (buddha.mats[mat_i].ambient_t.has_value())
-          tex_man.get(buddha.mats[mat_i].ambient_t.value()).bind(0);
-        if (buddha.mats[mat_i].diffuse_t.has_value())
-          tex_man.get( buddha.mats[mat_i].diffuse_t.value() ).bind(1);
-        if (buddha.mats[mat_i].specular_t.has_value())
-          tex_man.get( buddha.mats[mat_i].specular_t.value() ).bind(2);
+        if (buddha.mats[mat_i].ambient_t > 0)
+          tex_man.get(buddha.mats[mat_i].ambient_t).bind(0);
+        if (buddha.mats[mat_i].diffuse_t > 0)
+          tex_man.get( buddha.mats[mat_i].diffuse_t ).bind(1);
+        if (buddha.mats[mat_i].specular_t > 0)
+          tex_man.get( buddha.mats[mat_i].specular_t ).bind(2);
         glBindBufferBase(GL_UNIFORM_BUFFER, 1, buddha.mats[mat_i].ubo);
       buddha_matskip:
         cel_shade.bind(0);

@@ -59,6 +59,7 @@ const float fog_zstart = 0.9998f;
 const float fog_zend = 1.0f;
 
 vec4 compute_fog() {
+  return vec4(0.0f);
   float f = fog_zend - texture(sponza_depth, uv).r;
   f /= (fog_zend - fog_zstart);
   f = sqrt(f);

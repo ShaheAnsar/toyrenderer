@@ -54,10 +54,10 @@ struct basic_mat_ubo {
 struct basic_mat {
   GLuint ubo;
   basic_mat_ubo mat_ubo;
-  std::optional<unsigned char> ambient_t;
-  std::optional<unsigned char> diffuse_t;
-  std::optional<unsigned char> specular_t;
-  std::optional<unsigned char> normal_t;
+  char ambient_t;
+  char diffuse_t;
+  char specular_t;
+  char normal_t;
 };
 
 extern void log_recurse();

@@ -21,7 +21,7 @@ layout(std140, binding = 1) uniform mat{
   vec4 ambient_c; // <R, G, B, [Texture exists? 1 if true, 0 if yes]>
   vec4 diffuse_c;
   vec4 specular_c;
-  uvec4 bitmap; // Bit 0 corespons to an existing normal map
+//  uvec4 bitmap; // Bit 0 corespons to an existing normal map
 };
 
 layout(std140, binding = 2) uniform camera_t{
@@ -109,8 +109,8 @@ void main() {
   vec4 spec = calc_specular();
   vec4 ambi = calc_ambient();
   color = vec4(diff.rgb + spec.rgb + ambi.rgb, diff.a * ambi.a);
-  if(( bitmap.w & 1 ) == 1) {
-    //color = texture(normal_t, uv);
-    color.a = 1.0f;
-  }
+  //if(( bitmap.w & 1 ) == 1) {
+  //  //color = texture(normal_t, uv);
+  //  color.a = 1.0f;
+  //}
 }

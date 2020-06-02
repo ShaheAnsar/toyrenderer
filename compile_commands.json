@@ -1,21 +1,242 @@
 [
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++2a",
-            "-Wall",
-            "-Wextra",
-            "-O3",
-            "-pipe",
-            "-pedantic",
-            "-ggdb",
-            "-I./include",
-            "-o",
-            "obj/main.o",
-            "src/main.cpp"
-        ],
-        "directory": "/home/shahe/linux-hdd/development/C++/OGL",
-        "file": "src/main.cpp"
-    }
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_camera.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_camera.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_camera.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/camera.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/camera.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_camera.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_common.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_common.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_common.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/common.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/common.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_common.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_engine2D.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_engine2D.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_engine2D.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/engine2D.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/engine2D.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_engine2D.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_framebuffer.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_framebuffer.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_framebuffer.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/framebuffer.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/framebuffer.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_framebuffer.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "cc -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_glad.c.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_glad.c.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_glad.c.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/glad.c",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/glad.c",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_glad.c.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/imgui/imgui.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/imgui/imgui.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_demo.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_demo.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_demo.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/imgui/imgui_demo.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/imgui/imgui_demo.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_demo.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_draw.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_draw.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_draw.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/imgui/imgui_draw.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/imgui/imgui_draw.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_draw.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_impl_glfw.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_impl_glfw.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_impl_glfw.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/imgui/imgui_impl_glfw.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/imgui/imgui_impl_glfw.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_impl_glfw.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_impl_opengl3.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_impl_opengl3.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_impl_opengl3.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/imgui/imgui_impl_opengl3.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/imgui/imgui_impl_opengl3.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_impl_opengl3.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_widgets.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_widgets.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_widgets.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/imgui/imgui_widgets.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/imgui/imgui_widgets.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_widgets.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_logger.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_logger.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_logger.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/logger.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/logger.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_logger.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_main.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_main.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_main.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/main.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/main.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_main.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_meshinstance.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_meshinstance.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_meshinstance.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/meshinstance.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/meshinstance.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_meshinstance.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_primitivegen.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_primitivegen.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_primitivegen.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/primitivegen.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/primitivegen.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_primitivegen.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_resourceman.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_resourceman.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_resourceman.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/resourceman.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/resourceman.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_resourceman.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_shader.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_shader.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_shader.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/shader.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/shader.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_shader.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++ -Iogl.out@exe -I. -I.. -I../include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++2a -O3 -g -MD -MQ 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_texture.cpp.o' -MF 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_texture.cpp.o.d' -o 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_texture.cpp.o' -c /home/shahe/linux-hdd/development/C++/OGL/src/texture.cpp",
+    "file": "/home/shahe/linux-hdd/development/C++/OGL/src/texture.cpp",
+    "output": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_texture.cpp.o"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "c++  -o ogl.out 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_camera.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_common.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_engine2D.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_framebuffer.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_glad.c.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_demo.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_draw.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_impl_glfw.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_impl_opengl3.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_imgui_imgui_widgets.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_logger.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_main.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_meshinstance.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_primitivegen.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_resourceman.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_shader.cpp.o' 'ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_texture.cpp.o' -Wl,--as-needed -Wl,--no-undefined -Wl,--start-group -ldl /usr/lib/libglfw.so -Wl,--end-group",
+    "file": "ogl.out@exe/_home_shahe_linux-hdd_development_C++_OGL_src_camera.cpp.o",
+    "output": "ogl.out"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "/usr/bin/meson test --no-rebuild --print-errorlogs",
+    "file": "all",
+    "output": "meson-test"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "",
+    "file": "meson-test",
+    "output": "test"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "/usr/bin/meson test --benchmark --logbase benchmarklog --num-processes=1 --no-rebuild",
+    "file": "all",
+    "output": "meson-benchmark"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "",
+    "file": "meson-benchmark",
+    "output": "benchmark"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "/usr/bin/meson install --no-rebuild",
+    "file": "PHONY",
+    "output": "meson-install"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "",
+    "file": "meson-install",
+    "output": "install"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "/usr/bin/meson dist",
+    "file": "PHONY",
+    "output": "meson-dist"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "",
+    "file": "meson-dist",
+    "output": "dist"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "/usr/bin/meson --internal scanbuild /home/shahe/linux-hdd/development/C++/OGL /home/shahe/linux-hdd/development/C++/OGL/build /usr/bin/meson",
+    "file": "PHONY",
+    "output": "meson-scan-build"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "",
+    "file": "meson-scan-build",
+    "output": "scan-build"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "/usr/bin/meson --internal tags etags /home/shahe/linux-hdd/development/C++/OGL",
+    "file": "PHONY",
+    "output": "meson-TAGS"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "",
+    "file": "meson-TAGS",
+    "output": "TAGS"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "/usr/bin/meson --internal tags ctags /home/shahe/linux-hdd/development/C++/OGL",
+    "file": "PHONY",
+    "output": "meson-ctags"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "",
+    "file": "meson-ctags",
+    "output": "ctags"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "/usr/bin/meson --internal uninstall",
+    "file": "PHONY",
+    "output": "meson-uninstall"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "",
+    "file": "meson-uninstall",
+    "output": "uninstall"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "",
+    "file": "ogl.out",
+    "output": "all"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "",
+    "file": "meson-clean",
+    "output": "clean"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "/usr/bin/ninja -t clean",
+    "file": "PHONY",
+    "output": "meson-clean"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "/usr/bin/meson --internal regenerate /home/shahe/linux-hdd/development/C++/OGL /home/shahe/linux-hdd/development/C++/OGL/build --backend ninja",
+    "file": "../meson.build",
+    "output": "build.ninja"
+  },
+  {
+    "directory": "/home/shahe/linux-hdd/development/C++/OGL/build",
+    "command": "/usr/bin/meson --internal regenerate /home/shahe/linux-hdd/development/C++/OGL /home/shahe/linux-hdd/development/C++/OGL/build --backend ninja",
+    "file": "PHONY",
+    "output": "reconfigure"
+  }
 ]
