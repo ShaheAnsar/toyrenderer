@@ -25,7 +25,7 @@ namespace Rend{
 			      GLenum internal_image_format = GL_RGB);
       std::size_t add_texture(const Rend::Texture& o);
       std::size_t add_texture(const Rend::Texture& o, const std::string& name);
-      Rend::Texture& get(std::size_t i);
+      inline Rend::Texture &get(std::size_t i) { return textures[i]; }
       const std::string& get_name(std::size_t n);
       void reload_texture(std::size_t i);
     };

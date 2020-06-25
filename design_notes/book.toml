@@ -1,0 +1,6 @@
+[book]
+authors = ["Muzzammil Shahe Ansar"]
+language = "en"
+multilingual = false
+src = "src"
+title = "design_notes"

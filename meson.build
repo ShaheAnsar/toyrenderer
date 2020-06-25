@@ -8,4 +8,6 @@ deps = [ dependency('glfw3') ]
 optimization = 3
 debug = true
 executable('ogl.out', sources, include_directories:incdir, dependencies: deps,
+  c_args: ['-funroll-loops', '-mtune=native'],
+  cpp_args: ['-funroll-loops', '-mtune=native'],
   link_args: '-ldl')

@@ -72,9 +72,6 @@ std::size_t RMan::Texture::add_texture(const std::string& name, const std::strin
   return textures.size() - 1;
 }
 
-Rend::Texture& RMan::Texture::get(std::size_t i) {
-  return textures[i];
-}
 
 const std::string& RMan::Texture::get_name(std::size_t i) {
   return texture_names[i];
